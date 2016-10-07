@@ -1,6 +1,6 @@
 CXXFLAGS =	-O2 -g -Wall -fmessage-length=0
 
-OBJS =		ray-trace.o
+OBJS =		ray-trace.o Vector.o
 
 LIBS =
 
