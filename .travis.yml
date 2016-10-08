@@ -1,0 +1,12 @@
+# Habilitar soporte para C++
+language: cpp
+
+# Compiladores
+compiler:
+  - clang
+  - gcc
+
+# Comandos
+script:
+  - cd src
+  - make
