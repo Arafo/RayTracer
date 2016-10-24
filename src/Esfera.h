@@ -6,6 +6,7 @@
 #include <math.h>
 
 #include <Vector.h>
+#include <Rayo.h>
 
 class Esfera {
 public:
