@@ -18,9 +18,9 @@ int main()
 	v3 = v1 - v2;
 	cout << "Resta de vectores: (" << v3.x << ", " << v3.y << ", " << v3.z << ") "<< endl;
 	v3 = v1 * v2;
-	cout << "Multiplicación de vectores: (" << v3.x << ", " << v3.y << ", " << v3.z << ") "<< endl;
+	cout << "Multiplicacion de vectores: (" << v3.x << ", " << v3.y << ", " << v3.z << ") "<< endl;
 	v3 = v1 / v2;
-	cout << "División de vectores: (" << v3.x << ", " << v3.y << ", " << v3.z << ") "<< endl;
+	cout << "Division de vectores: (" << v3.x << ", " << v3.y << ", " << v3.z << ") "<< endl;
 
 	int w = 800;
 	int h = 600;
