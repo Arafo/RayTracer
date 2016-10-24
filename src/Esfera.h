@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <Vector.h>
-#include <Rayo.h>
+#include "Vector.h"
+#include "Rayo.h"
 
 class Esfera {
 public:
