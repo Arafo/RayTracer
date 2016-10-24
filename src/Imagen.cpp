@@ -71,7 +71,10 @@ void Imagen::saveBMP(const char *fichero) {
 			float green = (rgb->g) * 255;
 			float blue = (rgb->b) * 255;
 
-			unsigned char color[3] = {(int)floor(blue), (int)floor(green), (int)floor(red)};
+			unsigned char color[3] = {
+				static_cast<unsigned char>((int)floor(blue)),
+				static_cast<unsigned char>((int)floor(green)),
+				static_cast<unsigned char>((int)floor(red))};
 			fwrite(color, 1, 3, f);
 		}
 	}
@@ -93,8 +96,11 @@ void Imagen::savePPM(const char *fichero) {
 			float green = (rgb->g) * 255;
 			float blue = (rgb->b) * 255;
 
-    		unsigned char color[3] = {(int)floor(red), (int)floor(green), (int)floor(blue)};
-			fwrite(color, 1, 3, f);
+    		unsigned char color[3] = {
+    			static_cast<unsigned char>((int)floor(red)),
+    			static_cast<unsigned char>((int)floor(green)),
+    			static_cast<unsigned char>((int)floor(blue))};
+    		fwrite(color, 1, 3, f);
 		}
 	}
 	fclose(f);
