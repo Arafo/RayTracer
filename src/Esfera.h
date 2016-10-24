@@ -13,7 +13,7 @@ public:
 	float radius;
 	Vector center;
 
-	//Constructor
+	//Constructores
 	Esfera() : radius(1), center(Vector()) {}
 	Esfera(int radius_, Vector center_) : radius(radius_), center(center_) {}
 
