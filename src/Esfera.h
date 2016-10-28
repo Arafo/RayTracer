@@ -1,24 +1,20 @@
 #ifndef __ESFERA_H__
 #define __ESFERA_H__
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-
 #include "Vector.h"
 #include "Rayo.h"
+#include "Objeto.h"
 
-class Esfera {
+class Esfera : public Objeto {
 public:
-	float radius;
-	Vector center;
+	Vector centro;
+	float radio;
 
-	//Constructores
-	Esfera() : radius(1), center(Vector()) {}
-	Esfera(int radius_, Vector center_) : radius(radius_), center(center_) {}
+	// Constructor
+	Esfera(Vector centro_, float radio_) : centro(centro_), radio(radio_) {}
 
-	//Funciones
-	bool interseccion(Rayo ray);
+	// Funciones
+	virtual bool interseccion(Rayo);
 };
 
 #endif
