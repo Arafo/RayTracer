@@ -10,6 +10,10 @@ public:
 	Color(float r_, float g_, float b_) : r(r_), g(g_), b(b_), a(1) {}
     Color(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
 
+    // Funciones
+    Color operator + (Color const &c) const;
+    Color operator * (float c) const;
+
 };
 
 #endif

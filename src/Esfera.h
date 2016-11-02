@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Rayo.h"
 #include "Objeto.h"
+#include "Interseccion.h"
 
 class Esfera : public Objeto {
 public:
@@ -14,7 +15,7 @@ public:
 	Esfera(Vector centro_, float radio_) : centro(centro_), radio(radio_) {}
 
 	// Funciones
-	virtual bool interseccion(Rayo);
+	virtual Interseccion interseccion(Rayo);
 };
 
 #endif

@@ -9,6 +9,7 @@
 #include "Objeto.h"
 #include "Esfera.h"
 #include "Luz.h"
+#include "Interseccion.h"
 
 using namespace std;
 
@@ -19,6 +20,11 @@ std::vector<Luz*> luces;
 void addObjeto(Objeto* objeto);
 void addLuz(Luz* luz);
 Color trazarRayo(const Rayo &rayo);
+Color calcularIluminacion(const Interseccion& interseccion);
+Color calcularLuzAmbiental(const Interseccion& interseccion, const Color& color);
+Color calcularLuzDifusa(const Interseccion& interseccion, const Color& color);
+Color calcularLuzEspecular(const Interseccion& intersection, Luz* light);
+bool estaEnSombra(const Rayo& rayo);
 
 int main()
 {
@@ -73,17 +79,65 @@ int main()
 
 //
 Color trazarRayo(const Rayo &rayo) {
-	bool interseccion;
+	Interseccion interseccion;
 	for (vector<Objeto*>::iterator itr = objetos.begin(); itr < objetos.end(); itr++) {
 		 interseccion = (*itr)->interseccion(rayo);
-		 if (interseccion) 
+		 if (interseccion.hayInterseccion) 
 		 	break;
 	}
 
-	if (interseccion) {
-		return Color(.4, .3, .7);
+	if (interseccion.hayInterseccion) {
+		return calcularIluminacion(interseccion);
 	}
 	return Color();
+}
+
+Color calcularIluminacion(const Interseccion &interseccion) {
+	Color color = Color(.4, .3, .7); // De prueba
+	Color luzAmbiental = calcularLuzAmbiental(interseccion, color);
+	Color luzDifusa = calcularLuzDifusa(interseccion, color);
+
+	return luzAmbiental + luzDifusa;
+}
+
+Color calcularLuzAmbiental(const Interseccion& interseccion, const Color& color) {
+   return color * 0.2;
+}
+
+Color calcularLuzDifusa(const Interseccion &interseccion, const Color& color) {
+	// Luz difusa
+	Color colorDifuso(0.0, 0.0, 0.0);
+
+	for (vector<Luz*>::iterator itr = luces.begin(); itr < luces.end(); itr++) {
+		Luz* luz = *itr;
+
+		Vector interseccionLuz = luz->posicion - interseccion.interseccion;
+		Vector direccionLuz = interseccionLuz.normalizar();
+		float producto = interseccion.normal.escalar(direccionLuz);
+
+		if (producto >= 0.0f) {
+			Rayo rayoSombra = Rayo(interseccion.interseccion, direccionLuz);
+
+			if (estaEnSombra(rayoSombra)) {
+				//continue;
+			}
+			colorDifuso = (colorDifuso + (color * producto)) * luz->intensidad;
+		}
+	}
+
+	return colorDifuso;
+}
+
+bool estaEnSombra(const Rayo& rayo) {
+	Interseccion interseccionMin;
+
+	for (vector<Objeto*>::iterator itr = objetos.begin(); itr < objetos.end(); itr++) {
+		 Interseccion interseccion = (*itr)->interseccion(rayo);
+		 if (interseccion.hayInterseccion && interseccion.distancia < interseccionMin.distancia) 
+		 	interseccionMin = interseccion;
+	}
+
+	return interseccionMin.hayInterseccion;
 }
 
 // Añade un objeto a la lista de objetos
