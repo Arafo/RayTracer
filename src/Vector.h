@@ -1,6 +1,10 @@
 #ifndef __VECTOR_H__
 #define __VECTOR_H__
 
+#include <ostream>
+
+using namespace std;
+
 class Vector {
 public:
 
@@ -15,11 +19,14 @@ public:
 	float escalar(Vector const &v) const;
 	Vector vectorial(Vector const &v) const;
 	Vector normalizar();
+	float longitud() const;
 	Vector operator + (Vector const &v) const;
+	Vector & operator += (Vector const &v);
 	Vector operator - (Vector const &v) const;
 	Vector operator * (Vector const &v) const;
 	Vector operator / (Vector const &v) const;
 	Vector & operator /= (Vector const &v);
+	friend ostream & operator << (ostream &strm, const Vector &v);
 };
 
 #endif
