@@ -67,14 +67,14 @@ void Imagen::saveBMP(const char *fichero) {
         for (int x = 0; x < _width; x++) {
         	Color* rgb = _imagen + (x * _height + y);
 
-        	float red = (rgb->r) * 255;
-			float green = (rgb->g) * 255;
-			float blue = (rgb->b) * 255;
+        	float red = (rgb->r > 1.0) ? 1.0 : rgb->r;;
+			float green = (rgb->g > 1.0) ? 1.0 : rgb->g;
+			float blue = (rgb->b > 1.0) ? 1.0 : rgb->b;
 
-			unsigned char color[3] = {
-				static_cast<unsigned char>((int)floor(blue)),
-				static_cast<unsigned char>((int)floor(green)),
-				static_cast<unsigned char>((int)floor(red))};
+    		unsigned char color[3] = {
+    			static_cast<unsigned char>((int)floor(blue * 255)),
+    			static_cast<unsigned char>((int)floor(green * 255)),
+    			static_cast<unsigned char>((int)floor(red * 255))};
 			fwrite(color, 1, 3, f);
 		}
 	}
@@ -92,14 +92,14 @@ void Imagen::savePPM(const char *fichero) {
         for (int x = 0; x < _width; x++) {
     		Color* rgb = _imagen + (x * _height + y);
 
-        	float red = (rgb->r) * 255;
-			float green = (rgb->g) * 255;
-			float blue = (rgb->b) * 255;
+        	float red = (rgb->r > 1.0) ? 1.0 : rgb->r;;
+			float green = (rgb->g > 1.0) ? 1.0 : rgb->g;
+			float blue = (rgb->b > 1.0) ? 1.0 : rgb->b;
 
     		unsigned char color[3] = {
-    			static_cast<unsigned char>((int)floor(red)),
-    			static_cast<unsigned char>((int)floor(green)),
-    			static_cast<unsigned char>((int)floor(blue))};
+    			static_cast<unsigned char>((int)floor(red * 255)),
+    			static_cast<unsigned char>((int)floor(green * 255)),
+    			static_cast<unsigned char>((int)floor(blue * 255))};
     		fwrite(color, 1, 3, f);
 		}
 	}
