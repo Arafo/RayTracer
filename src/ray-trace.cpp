@@ -22,13 +22,12 @@ void addLuz(Luz* luz);
 Color trazarRayo(const Rayo &rayo);
 Color calcularIluminacion(const Interseccion& interseccion);
 Color calcularLuzAmbiental(const Interseccion& interseccion, const Color& color);
-Color calcularLuzDifusa(const Interseccion& interseccion, const Color& color);
+Color calcularLuzDifusaEspecular(const Interseccion& interseccion, const Color& color);
 Color calcularLuzEspecular(const Interseccion& intersection, Luz* light);
 bool estaEnSombra(const Rayo& rayo);
+Interseccion interseccionMasCercana(const Rayo& rayo);
 
-int main()
-{
-
+int main() {
 	int w = 800;
 	int h = 600;
 
@@ -39,11 +38,14 @@ int main()
 
 	// Escena
 	addObjeto(new Esfera(Vector(10, 0, 0), 30));
-	addObjeto(new Esfera(Vector(-7, -0.5, 90), 2));
-	addObjeto(new Esfera(Vector(-40, 10, -20), 30));
-	addObjeto(new Esfera(Vector(3400, 0, -10000), 2800));
+	addObjeto(new Esfera(Vector(-44, 0, -20), 20));
+	//addObjeto(new Esfera(Vector(-40, 4, 0), 10));
+	//addObjeto(new Esfera(Vector(-40, 10, -20), 30));
+	//addObjeto(new Esfera(Vector(3400, 0, -10000), 2800));
+	//addObjeto(new Esfera(Vector(-7, -0.5, 90), 2));
+	addObjeto(new Esfera(Vector(w/4, -1000030, 1000), 1000000));
 
-	addLuz(new Luz(Vector(50, 50, 1000), 0.9));
+	addLuz(new Luz(Vector(50, 50, 100), 0.9));
 
 	for (int x = 0; x < w; x++) {
 
@@ -63,28 +65,24 @@ int main()
 			float escala = camara.f / (float)w;
 
 			Vector punto = camara.direccion - 
-				(camara.u * (inicioX + anchuraPixel) * escala) + 
-				(camara.v * (inicioY + anchuraPixel) * escala);
+				(camara.u * inicioX * escala) + 
+				(camara.v * inicioY * escala);
 			Rayo rayo(camara.posicion, punto - camara.posicion);
+			//cout << punto << endl;
 			//cout << "Rayo: " << rayo.origen << " -> " << rayo.direccion << endl;
 			Color color = trazarRayo(rayo);
 			imagen.pintar(x, y, color);
 		}
 	}
 	imagen.saveBMP("imagen.bmp");
-	imagen.savePPM("imagen.ppm");
+	//imagen.savePPM("imagen.ppm");
 
 	return 0;
 }
 
 //
 Color trazarRayo(const Rayo &rayo) {
-	Interseccion interseccion;
-	for (vector<Objeto*>::iterator itr = objetos.begin(); itr < objetos.end(); itr++) {
-		 interseccion = (*itr)->interseccion(rayo);
-		 if (interseccion.hayInterseccion) 
-		 	break;
-	}
+	Interseccion interseccion = interseccionMasCercana(rayo);
 
 	if (interseccion.hayInterseccion) {
 		return calcularIluminacion(interseccion);
@@ -92,43 +90,79 @@ Color trazarRayo(const Rayo &rayo) {
 	return Color();
 }
 
+//
 Color calcularIluminacion(const Interseccion &interseccion) {
 	Color color = Color(.4, .3, .7); // De prueba
 	Color luzAmbiental = calcularLuzAmbiental(interseccion, color);
-	Color luzDifusa = calcularLuzDifusa(interseccion, color);
+	Color luzDifusaEspecular = calcularLuzDifusaEspecular(interseccion, color);
 
-	return luzAmbiental + luzDifusa;
+	return luzAmbiental + luzDifusaEspecular;
 }
 
+//
 Color calcularLuzAmbiental(const Interseccion& interseccion, const Color& color) {
-   return color * 0.2;
+	return color * 0.2;
 }
 
-Color calcularLuzDifusa(const Interseccion &interseccion, const Color& color) {
-	// Luz difusa
+//
+Color calcularLuzDifusaEspecular(const Interseccion &interseccion, const Color& color) {
+	// Luz difusa y especular
 	Color colorDifuso(0.0, 0.0, 0.0);
+	Color colorEspecular(0.0, 0.0, 0.0);
 
 	for (vector<Luz*>::iterator itr = luces.begin(); itr < luces.end(); itr++) {
 		Luz* luz = *itr;
 
 		Vector interseccionLuz = luz->posicion - interseccion.interseccion;
-		Vector direccionLuz = interseccionLuz.normalizar();
-		float producto = interseccion.normal.escalar(direccionLuz);
+		interseccionLuz.normalizar();
+		float producto = interseccion.normal.escalar(interseccionLuz);
 
 		if (producto >= 0.0f) {
-			Rayo rayoSombra = Rayo(interseccion.interseccion, direccionLuz);
+			// Rayo de sombra desde el punto de interseccion a la luz
+			Rayo rayoSombra = Rayo(interseccion.interseccion + 0.1, interseccionLuz);
 
 			if (estaEnSombra(rayoSombra)) {
-				//continue;
+				// Sombra
+				continue;
 			}
 			colorDifuso = (colorDifuso + (color * producto)) * luz->intensidad;
+			colorEspecular = colorEspecular + calcularLuzEspecular(interseccion, luz);
 		}
 	}
 
-	return colorDifuso;
+	return colorDifuso + colorEspecular;
 }
 
+//
+Color calcularLuzEspecular(const Interseccion& interseccion, Luz* luz) {
+	Color colorEspecular(0.0, 0.0, 0.0);
+	float brillo = 8;
+
+	Vector espectador = (interseccion.rayo.origen - interseccion.interseccion).normalizar();
+	Vector lightOffset = (luz->posicion - interseccion.interseccion).normalizar();
+	// 2N(N escalar L) - L
+	Vector reflejado = interseccion.normal * 2 * (interseccion.normal.escalar(lightOffset)) - lightOffset;
+
+	float producto = reflejado.escalar(espectador);
+
+	if (producto > 0) {
+		float intensidadEspecular = pow(producto, brillo) * luz->intensidad;
+
+		colorEspecular.r = intensidadEspecular;
+		colorEspecular.g = intensidadEspecular;
+		colorEspecular.b = intensidadEspecular;
+	}
+	return colorEspecular;
+}
+
+//
 bool estaEnSombra(const Rayo& rayo) {
+	Interseccion interseccionMin = interseccionMasCercana(rayo);
+	return interseccionMin.hayInterseccion;
+}
+
+//
+Interseccion interseccionMasCercana(const Rayo& rayo) {
 	Interseccion interseccionMin;
 
 	for (vector<Objeto*>::iterator itr = objetos.begin(); itr < objetos.end(); itr++) {
@@ -137,7 +171,7 @@ bool estaEnSombra(const Rayo& rayo) {
 		 	interseccionMin = interseccion;
 	}
 
-	return interseccionMin.hayInterseccion;
+	return interseccionMin;
 }
 
 // Añade un objeto a la lista de objetos
