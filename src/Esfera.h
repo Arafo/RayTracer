@@ -11,8 +11,11 @@ public:
 	Vector centro;
 	float radio;
 
-	// Constructor
-	Esfera(Vector centro_, float radio_) : centro(centro_), radio(radio_) {}
+	// Constructores
+	Esfera(Vector centro_, float radio_) : Objeto(), centro(centro_), radio(radio_) {}
+
+	Esfera(Vector centro_, float radio_, Color color, float iEspecular, float iReflex, float iRefrac, float cRefrac) :
+	Objeto(color, iEspecular, iReflex, iRefrac, cRefrac), centro(centro_), radio(radio_) {}
 
 	// Funciones
 	virtual Interseccion interseccion(Rayo);
