@@ -207,6 +207,11 @@ Color calcularLuzReflexionRefraccion(const Interseccion& interseccion) {
 	return colorReflexion + colorRefraccion;
 }
 
+Vector reflexion(const Vector& normal, const Vector& direccion) {
+	float cosI	 = -(normal * direccion);
+	return direccion + 2*cosI*normal;
+}
+
 //
 Vector refractar(const Vector& normal, const Vector& direccion, float n) {
 	float cosI = -normal.escalar(direccion);
