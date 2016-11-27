@@ -112,7 +112,7 @@ Color trazarRayo(const Rayo &rayo) {
 
 //
 Color calcularIluminacion(const Interseccion &interseccion) {
-	Color color = interseccion.objeto->color;// Color(.4, .3, .7); // De prueba
+	Color color = interseccion.objeto->color;
 	Color luzAmbiental = calcularLuzAmbiental(interseccion, color);
 	Color luzDifusaEspecular = calcularLuzDifusaEspecular(interseccion, color);
 	Color luzReflexionRefraccion = calcularLuzReflexionRefraccion(interseccion);
@@ -207,12 +207,13 @@ Color calcularLuzReflexionRefraccion(const Interseccion& interseccion) {
 	return colorReflexion + colorRefraccion;
 }
 
+// Vector reflectado
 Vector reflexion(const Vector& normal, const Vector& direccion) {
-	float cosI	 = -(normal * direccion);
-	return direccion + (2*cosI*normal);
+	float cosI	 = -(normal.escalar(direccion));
+	return direccion + normal * 2 * cosI;
 }
 
-//
+// Vector refractado
 Vector refractar(const Vector& normal, const Vector& direccion, float n) {
 	float cosI = -normal.escalar(direccion);
 	float sinT2 = n * n * (1.0 - cosI * cosI);
