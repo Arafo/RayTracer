@@ -10,6 +10,7 @@ public:
 	Vector direccion;
 	int reflexiones;
 	float iRefracOrigen;
+	int rebotes;
 
 	// Constructores
 	Rayo() : origen(Vector()), direccion(Vector()), reflexiones(-1), iRefracOrigen(1.0) {}
@@ -19,8 +20,8 @@ public:
 		origen += (direccion / 1);
 	}
 
-	Rayo(Vector origen_, Vector direccion_, int reflexiones_, float iRefracOrigen_) : 
-	origen(origen_), direccion(direccion_), reflexiones(reflexiones_), iRefracOrigen(iRefracOrigen_) {
+	Rayo(Vector origen_, Vector direccion_, int reflexiones_, float iRefracOrigen_, int rebotes_) : 
+	origen(origen_), direccion(direccion_), reflexiones(reflexiones_), iRefracOrigen(iRefracOrigen_), rebotes(rebotes_) {
 		direccion = direccion_.normalizar();
 		origen += (direccion / 1);
 	}

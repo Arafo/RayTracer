@@ -17,3 +17,21 @@ Color Color::operator* (float cantidad) const {
 
 	return o;
 }
+
+Color Color::operator* (Color color) const {
+	Color o;
+	o.r = r * color.r;
+	o.g = g * color.g;
+	o.b = b * color.b;
+
+	return o;
+}
+
+Color Color::operator/ (float cantidad) const {
+	Color o;
+	o.r = r / cantidad;
+	o.g = g / cantidad;
+	o.b = b / cantidad;
+
+	return o;
+}

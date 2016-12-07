@@ -25,6 +25,7 @@ Color calcularLuzAmbiental(const Interseccion& interseccion, const Color& color)
 Color calcularLuzDifusaEspecular(const Interseccion& interseccion, const Color& color);
 Color calcularLuzEspecular(const Interseccion& interseccion, Luz* luz);
 Color calcularLuzReflexionRefraccion(const Interseccion& interseccion);
+Color calcularLuzIndirecta(const Interseccion& interseccion, const Color& color);
 Vector reflexion(const Vector& normal, const Vector& direccion);
 Vector refraccion(const Vector& normal, const Vector& direccion, float n);
 float reflectancia(const Vector& normal, const Vector& direccion, float n1, float n2);
@@ -51,15 +52,16 @@ int main() {
 
 	// Cornel Box
 	addObjeto(new Esfera(Vector(16, -26, -300), 12, Color(1, 1, 1), 16, -1, 0, 0));
-	addObjeto(new Esfera(Vector(-20, -30, -400), 10, Color(0.7, 0.7, 0.0), 100, 0.4, 0, 0));
+	addObjeto(new Esfera(Vector(-20, -30, -400), 10, Color(0.7, 0.7, 0), -1, 0.4, 0, 0));
 
 	addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
-	addObjeto(new Esfera(Vector(-100042, 0, 1000), 100000, Color(0.8, 0, 0), -1, 0, 0, 0));	// Pared Izquierda
-	addObjeto(new Esfera(Vector(100042, 0, 1000), 100000, Color(0, 0.8, 0), -1, 0, 0, 0));	// Pared Derecha
+	addObjeto(new Esfera(Vector(-100042, 0, 1000), 100000, Color(0.8, 0, 0), -1, -1, 0, 0));	// Pared Izquierda
+	addObjeto(new Esfera(Vector(100042, 0, 1000), 100000, Color(0, 0.8, 0), -1, -1, 0, 0));	// Pared Derecha
 	addObjeto(new Esfera(Vector(w/4, 0, -100440), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));		// Pared Fondo
-	addObjeto(new Esfera(Vector(w/4, 100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, 0, 0, 0));	// Techo
-
+	addObjeto(new Esfera(Vector(w/4, 100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Techo
+		
 	addLuz(new Luz(Vector(0, 20, -350), 0.9));
+	//addLuz(new Luz(Vector(0, -30, -350), 0.9));
 
 	// Otra escena
 	/*addObjeto(new Esfera(Vector(-200, -25, 0), 100, Color(1, 0, 0), 100, 0.75, 0, 0));
@@ -88,10 +90,11 @@ int main() {
 			Vector punto = camara.direccion - 
 				(camara.u * inicioX * escala) + 
 				(camara.v * inicioY * escala);
-			Rayo rayo(camara.posicion, punto - camara.posicion, 4, 1.0);
+			Rayo rayo(camara.posicion, punto - camara.posicion, 4, 1.0, 0);
 			//cout << punto << endl;
 			//cout << "Rayo: " << rayo.origen << " -> " << rayo.direccion << endl;
 			Color color = trazarRayo(rayo);
+
 			imagen.pintar(x, y, color);
 		}
 	}
@@ -103,6 +106,10 @@ int main() {
 
 //
 Color trazarRayo(const Rayo &rayo) {
+	if (rayo.rebotes > 1) {
+		return Color();
+	}
+
 	Interseccion interseccion = interseccionMasCercana(rayo);
 
 	if (interseccion.hayInterseccion) {
@@ -118,7 +125,10 @@ Color calcularIluminacion(const Interseccion &interseccion) {
 	Color luzDifusaEspecular = calcularLuzDifusaEspecular(interseccion, color);
 	Color luzReflexionRefraccion = calcularLuzReflexionRefraccion(interseccion);
 
-	return luzAmbiental + luzDifusaEspecular + luzReflexionRefraccion;
+	Color luzDirecta = luzAmbiental + luzDifusaEspecular + luzReflexionRefraccion;
+	Color luzIndirecta = calcularLuzIndirecta(interseccion, color);
+
+	return ((luzAmbiental + luzDifusaEspecular + luzReflexionRefraccion) / M_PI  + luzIndirecta * 2) * color;
 }
 
 //
@@ -142,7 +152,7 @@ Color calcularLuzDifusaEspecular(const Interseccion &interseccion, const Color& 
 
 		if (producto >= 0.0f) {
 			// Rayo de sombra desde el punto de interseccion a la luz
-			Rayo rayoSombra = Rayo(interseccion.interseccion, interseccionLuz, 1, interseccion.rayo.iRefracOrigen);
+			Rayo rayoSombra = Rayo(interseccion.interseccion, interseccionLuz, 1, interseccion.rayo.iRefracOrigen, interseccion.rayo.rebotes);
 
 			if (estaEnSombra(rayoSombra, distanciaLuz)) {
 				// Sombra
@@ -212,17 +222,55 @@ Color calcularLuzReflexionRefraccion(const Interseccion& interseccion) {
 
 	if (cantidadReflexion > 0) {
 		Vector reflejado = reflexion(interseccion.normal, interseccion.rayo.direccion);
-		Rayo rayoReflejado = Rayo(interseccion.interseccion, reflejado, reflexionesRestantes - 1, indiceRefraccionDestino);
+		Rayo rayoReflejado = Rayo(interseccion.interseccion, reflejado, reflexionesRestantes - 1, indiceRefraccionDestino, interseccion.rayo.rebotes);
 		colorReflexion = trazarRayo(rayoReflejado) * cantidadReflexion;
 	}
 
 	if (cantidadRefraccion > 0) {
 		Vector refractado = refraccion(interseccion.normal, interseccion.rayo.direccion, indiceRefraccionOrigen / indiceRefraccionDestino);
-		Rayo rayoRefractado = Rayo(interseccion.interseccion, refractado, 1, indiceRefraccionDestino);
+		Rayo rayoRefractado = Rayo(interseccion.interseccion, refractado, 1, indiceRefraccionDestino, interseccion.rayo.rebotes);
 		colorRefraccion = trazarRayo(rayoRefractado) * cantidadRefraccion;
 	}
      
 	return colorReflexion + colorRefraccion;
+}
+
+Vector muestreoSemiesfera(const float &r1, const float &r2) {
+    float x, y, z;
+
+    float phi = 2.0 * M_PI * r2;
+    float cosTheta = sqrt(1.0 - r1);
+    float sinTheta = sqrtf(1.0 - cosTheta * cosTheta);
+
+    x = cosf(phi) * sinTheta;
+    y = cosTheta;
+    z = sinf(phi) * sinTheta;
+
+    Vector direccion = Vector(x, y, z);
+    return direccion.normalizar();
+} 
+
+//
+Color calcularLuzIndirecta(const Interseccion& interseccion, const Color& color) {
+	Color colorLuzIndirecta;
+	float pdf = 1 / (2 * M_PI); 
+
+	int samples = 2;
+	for (int i = 0; i < samples; i++) {
+		float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+		Vector sample = muestreoSemiesfera(r1, r2);
+		Rayo rayoSample = Rayo(interseccion.interseccion + 0.01, sample, 1, interseccion.rayo.iRefracOrigen, interseccion.rayo.rebotes + 1);
+		colorLuzIndirecta = colorLuzIndirecta + trazarRayo(rayoSample) * r1 / pdf;
+	}
+	//cout << colorLuzIndirecta.r << " " << colorLuzIndirecta.g << " " << colorLuzIndirecta.b << endl;
+
+	colorLuzIndirecta.r = colorLuzIndirecta.r / samples;
+	colorLuzIndirecta.g = colorLuzIndirecta.g / samples;
+	colorLuzIndirecta.b = colorLuzIndirecta.b / samples;
+
+	return colorLuzIndirecta;
 }
 
 // Vector reflectado

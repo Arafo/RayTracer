@@ -13,6 +13,8 @@ public:
     // Funciones
     Color operator + (Color const &c) const;
     Color operator * (float c) const;
+    Color operator * (Color c) const;
+    Color operator / (float c) const;
 
 };
 
