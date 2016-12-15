@@ -48,3 +48,38 @@ Interseccion Esfera::interseccion(Rayo rayo) {
 
    return Interseccion(rayo, punto, distancia, normal, this);
 }
+
+float Esfera::getTipo() {
+   return LUZAREA;
+}
+
+Color Esfera::getColor(Vector point) {
+   if (textura == NULL)
+      return color;
+
+   // Normal entre la interseccion y la esfera
+   Vector normal = (point - centro).normalizar();
+
+   float theta = asinf(normal.y);
+   float phi = atan2f(normal.x, normal.z);
+
+   if (phi < 0)
+      phi += 2 * M_PI;
+
+   // Coordenadas U,V 
+   float u = 0.5 + phi / (2 * M_PI);
+   float v = 0.5 - theta / M_PI;
+
+   int width = u * textura->getWidth();
+   int height = v * textura->getHeight();        
+
+   int pixel = width * textura->getHeight() + height;
+
+   if (pixel > (textura->getWidth() * textura->getHeight())) {
+      //cout << px << endl;
+      //return Color();
+   }
+
+   Color final(textura->getImagen()[pixel % (textura->getWidth() * textura->getHeight())]);
+   return final;
+}
