@@ -82,6 +82,35 @@ void Imagen::saveBMP(const char *fichero) {
 	fclose(f);
 }
 
+// Lee la imagen en el fichero indicado por el puntero <fichero>
+// con formato .bmp y la almacena en <_imagen> 
+void Imagen::readBMP(const char* fichero) {
+    FILE* f = fopen(fichero, "rb");
+
+    unsigned char info[54];
+    fread(info, sizeof(unsigned char), 54, f);
+
+    int width = *(int*)&info[18];
+    int height = *(int*)&info[22];
+
+    _width = width;
+    _height = height;
+    _imagen = (Color*)malloc(sizeof(Color) * _width * _height);
+
+    unsigned char* data = new unsigned char[3];
+
+	for (int y = 0; y < _height; y++) {
+        for (int x = 0; x < _width; x += 1) {
+        	fread(data, 1, 3, f);
+            _imagen[x * _height + y] = Color(
+            	(float)((int)data[2]) / 255.0f, 
+            	(float)((int)data[1]) / 255.0f, 
+            	(float)((int)data[0]) / 255.0f);
+        }
+    }
+    fclose(f);
+}
+
 // Guarda la imagen almacenada en <_imagen> en el fichero indicado por el
 // puntero <fichero> con formato .ppm
 void Imagen::savePPM(const char *fichero) {
@@ -106,6 +135,63 @@ void Imagen::savePPM(const char *fichero) {
 	fclose(f);
 }
 
+// Lee la imagen en el fichero indicado por el puntero <fichero>
+// con formato .ppm y la almacena en <_imagen> 
+void Imagen::readPPM(const char *fichero) {
+    int width = 0, height = 0, maxColor = 0;
+
+    FILE* f;
+	if ((f = fopen(fichero, "rb")) == 0) {
+		fprintf(stderr, "Error al abrir fichero: %s\n", fichero);
+    	exit(1);
+	}
+
+    // Cabezera P6
+    char buff[16];
+    if (!fgets(buff, sizeof(buff), f)) {
+    	perror(fichero);
+    	exit(1);
+    }
+
+    if (buff[0] != 'P' || buff[1] != '6') {
+         fprintf(stderr, "Formato no valido\n");
+         exit(1);
+    }
+
+    // Comentarios
+    int c = getc(f);
+    while (c == '#') {
+    while (getc(f) != '\n') ;
+         c = getc(f);
+    }
+    ungetc(c, f);
+
+    fscanf(f, "%d %d", &width, &height);
+    fscanf(f, "%d", &maxColor);
+    while (fgetc(f) != '\n') ;
+
+    _width = width;
+    _height = height;
+    _imagen = (Color*)malloc(sizeof(Color) * _width * _height);   
+    
+    cout << "Textura: " << fichero << ", ";
+	cout << "W: " << width << ", ";
+	cout << "H: " << height << endl;
+
+    unsigned char* data = new unsigned char[3];
+
+	for (int y = 0; y < _height; y++) {
+        for (int x = 0; x < _width; x++) {
+        	fread(data, 1, 3, f);
+            _imagen[x * _height + y] = Color(
+            	(float)((int)data[0]) / 255.0f, 
+            	(float)((int)data[1]) / 255.0f, 
+            	(float)((int)data[2]) / 255.0f);
+		}
+	}
+	fclose(f);
+}
+
 // Pinta en las coordenadas (x, y) el Color <color> en la imagen.
 void Imagen::pintar(int x, int y, Color color) {
     if (x < 0 || x > _width - 1 || y < 0 || y > _height - 1) {
@@ -113,4 +199,16 @@ void Imagen::pintar(int x, int y, Color color) {
     }
     
     _imagen[x * _height + y] = color;
+}
+
+int Imagen::getWidth() {
+	return _width;
+}
+
+int Imagen::getHeight() {
+	return _height;
+}
+
+Color *Imagen::getImagen() {
+	return _imagen;
 }
