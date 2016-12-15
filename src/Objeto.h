@@ -18,10 +18,10 @@ public:
 	Textura* textura;
 
 	// Constructores
-	Objeto() : color(Color()), iEspecular(0), iReflexion(-1), iRefraccion(-1), cRefraccion(-1) {}
+	Objeto() : color(Color()), iEspecular(0), iReflexion(-1), iRefraccion(-1), cRefraccion(-1), textura(NULL) {}
 
 	Objeto(Color color_, float iEspecular_, float iReflexion_, float iRefraccion_, float cRefraccion_) : 
-	color(color_), iEspecular(iEspecular_), iReflexion(iReflexion_), iRefraccion(iRefraccion_), cRefraccion(cRefraccion_) {}
+	color(color_), iEspecular(iEspecular_), iReflexion(iReflexion_), iRefraccion(iRefraccion_), cRefraccion(cRefraccion_), textura(NULL) {}
 
 	Objeto(Color color_, float iEspecular_, float iReflexion_, float iRefraccion_, float cRefraccion_, Textura& textura_) : 
 	color(color_), iEspecular(iEspecular_), iReflexion(iReflexion_), iRefraccion(iRefraccion_), cRefraccion(cRefraccion_), textura(&textura_) {}
