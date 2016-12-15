@@ -114,9 +114,6 @@ int main() {
 			float escala = camara.f / (float)w;
 			float sample = 1.0 / (ANTIALIASING * ANTIALIASING);
 
-			//cout << punto << endl;
-			//cout << "Rayo: " << rayo.origen << " -> " << rayo.direccion << endl;
-			//int samples = 128;
 			Color color(0.0, 0.0, 0.0);
 			for (int xaa = 0; xaa < ANTIALIASING; xaa++) {
 				for (int yaa = 0; yaa < ANTIALIASING; yaa++) {
@@ -124,15 +121,11 @@ int main() {
 						(camara.u * (inicioX + (xaa * anchuraSample)) * escala) + 
 						(camara.v * (inicioY + (yaa * anchuraSample)) * escala);
 					Rayo rayo(camara.posicion, punto - camara.posicion, 4, 1.0, 0);
-			//for (int i = 0; i < samples; i++) {
+					//cout << punto << endl;
+					//cout << "Rayo: " << rayo.origen << " -> " << rayo.direccion << endl;
 					color = color + (trazarRayo(rayo) * sample);
-			//}
 				}
 			}
-
-			//color.r = color.r / (samples);
-			//color.g = color.g / (samples);
-			//color.b = color.b / (samples);
 
 			imagen.pintar(x, y, color);
 		}
@@ -179,22 +172,6 @@ Color calcularIluminacion(const Interseccion &interseccion) {
 	return luzReflexionRefraccion + ((luzAmbiental + luzDifusaEspecular) / M_PI  + luzIndirecta * 2) * color;
 
 	//return ((luzAmbiental + luzDifusaEspecular + luzReflexionRefraccion) / M_PI + luzIndirecta * 2);
-}
-
-Vector random_unit_vector() {    
-	float x, y, z;
-	float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-
-    float phi = 2.0 * M_PI * r2;
-    float sinTheta = sqrtf(1.0 - r1 * r1);
-
-    x = cosf(phi) * sinTheta;
-    y = sinf(phi) * sinTheta;
-    z = r1;
-
-    Vector direccion = Vector(x, y, z);
-    return direccion.normalizar();
 }
 
 //
@@ -340,23 +317,12 @@ Color calcularLuzReflexionRefraccion(const Interseccion& interseccion) {
 
 //
 Color calcularLuzIndirecta(const Interseccion& interseccion, const Color& color) {
-	if (interseccion.rayo.rebotes > 1) {
+	//if (interseccion.rayo.rebotes > 1) {
 		//	return Color();
-	}
+	//}
 
 	Color colorLuzIndirecta;
 	float pdf = 1 / (2 * M_PI); 
-	/*float absorbance = 1.f - max(max(color.r, color.g), color.b);
-	float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-
-	if (random > 1.f - absorbance) {
-		return Color();
-	}*/
-	//else {
-		//Vector sample = uniformSampleHemisphere(interseccion.normal);
-		//Rayo rayoSample = Rayo(interseccion.interseccion + 0.01, sample, 1, interseccion.rayo.iRefracOrigen, interseccion.rayo.rebotes + 1);
-		//colorLuzIndirecta = trazarRayo(rayoSample);
-	//}
 
 	for (int i = 0; i < LUZ_INDIRECTA_SAMPLES; i++) {
 		float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
