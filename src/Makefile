@@ -1,6 +1,6 @@
 CXXFLAGS =	-O3 -g -Wall -fmessage-length=0 -fopenmp
 
-OBJS =		ray-trace.o Vector.o Imagen.o Color.o Rayo.o Camara.o Interseccion.o Objeto.o Esfera.o Luz.o Triangulo.o Modelo.o Textura.o
+OBJS =		ray-trace.o Vector.o Imagen.o Color.o Rayo.o Camara.o Interseccion.o Objeto.o Esfera.o Luz.o Textura.o
 
 LIBS =
 
