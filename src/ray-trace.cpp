@@ -10,15 +10,19 @@
 #include "Objeto.h"
 #include "Esfera.h"
 #include "Luz.h"
+#include "Modelo.h"
 #include "Interseccion.h"
-#include "Textura.h";
+#include "Textura.h"
 
 using namespace std;
 
-bool LUZ_INDIRECTA = false;
+// Variables globales
+bool LUZ_INDIRECTA = true;
 int LUZ_INDIRECTA_SAMPLES = 32;
 int MAX_REBOTES = 1;
 int ANTIALIASING = 1;
+const char *FICHERO_BMP = "../resultados/imagen.bmp";
+const char *FICHERO_PPM = "../resultados/imagen.ppm";
 
 std::vector<Objeto*> objetos;
 std::vector<Luz*> luces;
@@ -49,13 +53,12 @@ int main() {
 	int h = 600;
 
 	Imagen imagen(w, h);
-	//Camara camara(Vector(0, 20, 100), Vector(0.0, 14, 0.0), Vector(0.0, 1.0, 0.0), 60);
+	Camara camara(Vector(0, 20, 100), Vector(0.0, 14, 0.0), Vector(0.0, 1.0, 0.0), 60);
 
 	int columnas = 0;
 
-	//imagen.readBMP("imagen.bmp");
-	//imagen.saveBMP("r1.bmp");
-	//exit(0);
+	// Texturas
+	Textura tex1("../texturas/mapa_hd.ppm");
 
 	// Escena
 	/*addObjeto(new Esfera(Vector(10, 0, 0), 30, Color(0.721, 0.167, 0.323), 50, -1, -1, 0));
@@ -66,19 +69,37 @@ int main() {
 
 	addLuz(new Luz(Vector(50, 50, 100), 0.9));*/
 
-	Textura tex1("../texturas/mapa_hd.ppm");
 
 	// Cornel Box
-	/*addObjeto(new Esfera(Vector(16, -22, -300), 16, Color(0, 0, 0), -1, -1, 1.6, 0));
-	addObjeto(new Esfera(Vector(-26, -26, -380), 12, Color(0.7, 0.7, 0), 16, -1, -1, 0));
+	addObjeto(new Esfera(Vector(16, -22, -300), 16, Color(0, 0, 0), -1, -1, 1.6, 0));
+	addObjeto(new Esfera(Vector(-26, -26, -380), 12, Color(0.7, 0.7, 0), 16, -1, -1, 0, tex1));
 
-	addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
-	addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
-	addObjeto(new Esfera(Vector(100038, 0, 1000), 100000, Color(0.55, 0.76, 0.29), -1, -1, 0, 0));	// Pared Derecha
-	addObjeto(new Esfera(Vector(w/4, 0, -100440), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));		// Pared Fondo
-	addObjeto(new Esfera(Vector(w/4, 100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Techo
+	//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
+	//addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
+	//addObjeto(new Esfera(Vector(100038, 0, 1000), 100000, Color(0.55, 0.76, 0.29), -1, -1, 0, 0));	// Pared Derecha
+	//addObjeto(new Esfera(Vector(w/4, 0, -100440), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));		// Pared Fondo
+	//addObjeto(new Esfera(Vector(w/4, 100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Techo
 
-	addLuz(new Luz(Vector(0, 20, -350), 0.9));*/
+	addLuz(new Luz(Vector(0, 20, -350), 0.9));
+
+	Modelo modelo("../modelos/face.ply", 400, Vector(0, 0, -440), Color(0.9, 0.9, 0.9));
+	modelo.cargar(objetos);
+	Modelo modelo2("../modelos/face_top.ply", 400, Vector(0, 38, -350), Color(0.9, 0.9, 0.9));
+	modelo2.cargar(objetos);
+	Modelo modelo3("../modelos/face_bottom.ply", 400, Vector(0, -38, -350), Color(0.9, 0.9, 0.9));
+	modelo3.cargar(objetos);
+	Modelo modelo4("../modelos/face_left.ply", 400, Vector(-46, 0, -350), Color(1, 0.32, 0.32));
+	modelo4.cargar(objetos);
+	Modelo modelo5("../modelos/face_rigth.ply", 400, Vector(46, 0, -350), Color(0.55, 0.76, 0.29));
+	modelo5.cargar(objetos);
+
+	//addLuz(new LuzArea(Vector(0, 20, -350), 0.9, Vector(0, 0, 1), Vector(1, 0, 0), 3));
+	//addLuz(new Esfera(Vector(0, 20, -350), 10, 0.9));
+	
+	//addObjeto(new Caja(Vector(-51, -40, -200), Vector(-50, 40, -500), Color(1, 0.32, 0.32), -1, -1, -1, 0));
+	//addObjeto(new Caja(Vector(-40, -40, -400), Vector(50, 40, -401), Color(0.9, 0.9, 0.9), -1, -1, -1, 0));
+
+	//addObjeto(new Plano(Vector(0, 0, -1), 1, Color(0.9, 0, 0.9), -1, -1, -1, 0));
 
 	// Otra escena
 	/*addObjeto(new Esfera(Vector(-200, -25, 0), 100, Color(1, 0, 0), 100, 0.75, 0, 0));
@@ -88,11 +109,11 @@ int main() {
 	addLuz(new Luz(Vector(0, 100, 200), 0.5));*/
 
 	// Escena textura
-	Camara camara(Vector(100, 0, 0), Vector(80, 0, -80), Vector(0, 1, 0), 60);
-	addObjeto(new Esfera(Vector(0, 0, -380), 30, Color(/*0.25, 0.77, 1*/0.7, 0.7, 0), -1, -1, -1, 0, tex1));
+	/*Camara camara(Vector(100, 0, 0), Vector(80, 0, -80), Vector(0, 1, 0), 60);
+	addObjeto(new Esfera(Vector(0, 0, -380), 30, Color(0.7, 0.7, 0), -1, -1, -1, 0, tex1));
 	addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.25, 0.77, 1), -1, -1, 0, 0));	// Suelo
 	addLuz(new Luz(Vector(0, 40, -200), 0.9));
-	addLuz(new Luz(Vector(0, 40, -400), 0.9));
+	addLuz(new Luz(Vector(0, 40, -400), 0.9));*/
 
 	#pragma omp parallel for
 	for (int x = 0; x < w; x++) {
@@ -130,8 +151,8 @@ int main() {
 			imagen.pintar(x, y, color);
 		}
 	}
-	imagen.saveBMP("imagen.bmp");
-	//imagen.savePPM("imagen.ppm");
+	imagen.saveBMP(FICHERO_BMP);
+	//imagen.savePPM(FICHERO_PPM);
 
 	t2 = clock();
 	float tiempo = ((float)t2 - (float)t1) / 1000;
@@ -287,7 +308,7 @@ Color calcularLuzReflexionRefraccion(const Interseccion& interseccion) {
 	float cantidadReflexion = indiceReflexion;
 	float cantidadRefraccion = 0;
 
-	if (reflexionesRestantes <= 0 || indiceReflexion <= 0 && indiceRefraccionDestino <= 0) {
+	if (reflexionesRestantes <= 0 || (indiceReflexion <= 0 && indiceRefraccionDestino <= 0)) {
 		return Color();
 	}
 
@@ -325,12 +346,19 @@ Color calcularLuzIndirecta(const Interseccion& interseccion, const Color& color)
 	float pdf = 1 / (2 * M_PI); 
 
 	for (int i = 0; i < LUZ_INDIRECTA_SAMPLES; i++) {
+		/*float absorbance = 1.f - max(max(color.r, color.g), color.b);
+		float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		if (random > 1.f - absorbance) {
+			//return Color();
+		}
+		else {*/
 		float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 
 		Vector sample = muestreoSemiesfera(interseccion.normal, r1, r2);
 		Rayo rayoSample = Rayo(interseccion.interseccion + 0.01, sample, 1, interseccion.rayo.iRefracOrigen, interseccion.rayo.rebotes + 1);
 		colorLuzIndirecta = colorLuzIndirecta + trazarRayo(rayoSample) * r1 / pdf;
+	//}
 	}
 	//cout << colorLuzIndirecta.r << " " << colorLuzIndirecta.g << " " << colorLuzIndirecta.b << endl;
 
