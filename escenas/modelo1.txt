@@ -1,0 +1,9 @@
+resolucion 512 512
+camara 0 20 100 0 14 0.0 0.0 1.0 0.0 60
+luz 0 20 -100 0.9
+modelo ../modelos/face.ply 400 0 0 -440 0.9 0.9 0.9
+modelo ../modelos/face_top.ply 400 0 48 -350 0.9 0.9 0.9
+modelo ../modelos/face_bottom.ply 4000 0 -48 -350 0.9 0.9 0.9
+modelo ../modelos/face_left.ply 400 -46 0 -350 1 0.32 0.32
+modelo ../modelos/face_rigth.ply 400 46 0 -350 0.55 0.76 0.29
+modelo ../modelos/pharah.ply 120 0 -4 -300 0.9 0.9 0.9
