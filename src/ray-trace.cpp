@@ -21,8 +21,13 @@ bool LUZ_INDIRECTA = false;
 int LUZ_INDIRECTA_SAMPLES = 8;
 int MAX_REBOTES = 1;
 int ANTIALIASING = 1;
-const char *FICHERO_BMP = "../resultados/imagen.bmp";
-const char *FICHERO_PPM = "../resultados/imagen.ppm";
+int w = 512;
+int h = 512;
+string FICHERO_BMP = "../resultados/imagen.bmp";
+string FICHERO_PPM = "../resultados/imagen.ppm";
+Camara camara;
+Textura tex[100];
+int contadorTexturas = 0;
 
 std::vector<Objeto*> objetos;
 std::vector<Luz*> luces;
@@ -30,6 +35,7 @@ std::vector<Luz*> luces;
 // Funciones
 void addObjeto(Objeto* objeto);
 void addLuz(Luz* luz);
+void leerEscena(istream& in);
 Color trazarRayo(const Rayo &rayo);
 Color calcularIluminacion(const Interseccion& interseccion);
 Color calcularLuzAmbiental(const Interseccion& interseccion, const Color& color);
@@ -44,54 +50,68 @@ float reflectancia(const Vector& normal, const Vector& direccion, float n1, floa
 bool estaEnSombra(const Rayo& rayo, float distanciaLuz);
 Interseccion interseccionMasCercana(const Rayo& rayo);
 
-int main() {
+int main(int argc, char** argv) {
 
 	clock_t t1, t2;
 	t1 = clock();
 
-	int w = 512;
-	int h = 512;
+	// Lectura de la escena
+	char* inFile = argv[1];
+	if (inFile != NULL) {
+		LUZ_INDIRECTA_SAMPLES = atoi(argv[2]);
+		LUZ_INDIRECTA = LUZ_INDIRECTA_SAMPLES > 1 ? true : false;
+		ANTIALIASING = atoi(argv[3]);
+
+		// Nombre de la imagen
+		if (argc > 4) {
+			FICHERO_BMP = argv[4];
+			FICHERO_PPM = argv[4];
+		}
+	}
+
+	ifstream inFileStream;
+	inFileStream.open(inFile, ifstream::in);
+
+	if (inFileStream.fail()) {
+		cerr << "Error al abrir el fichero:" << inFile << endl;
+		//exit(EXIT_FAILURE);
+
+		// Si no hay fichero de entrada, se utiliza la cornel box
+		cout << endl << "Cornel Box" << endl;
+		// Cornel Box
+		w = 800, h = 600;
+		LUZ_INDIRECTA = true;
+		LUZ_INDIRECTA_SAMPLES = 4;
+		ANTIALIASING = 2;
+		camara = Camara(Vector(0, 20, 100), Vector(0.0, 14, 0.0), Vector(0.0, 1.0, 0.0), 60);
+		addObjeto(new Esfera(Vector(16, -22, -300), 16, Color(0, 0, 0), -1, -1, 1.6, 0));
+		addObjeto(new Esfera(Vector(-26, -26, -380), 12, Color(0.7, 0.7, 0), 16, -1, -1, 0));
+
+		//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
+		//addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
+		//addObjeto(new Esfera(Vector(100038, 0, 1000), 100000, Color(0.55, 0.76, 0.29), -1, -1, 0, 0));	// Pared Derecha
+		//addObjeto(new Esfera(Vector(w/4, 0, -100440), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));		// Pared Fondo
+		//addObjeto(new Esfera(Vector(w/4, 100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Techo
+
+		addLuz(new Luz(Vector(0, 20, -350), 0.9));
+
+		Modelo modelo("../modelos/face.ply", 400, Vector(0, 0, -440), Color(0.9, 0.9, 0.9));
+		modelo.cargar(objetos);
+		Modelo modelo2("../modelos/face_top.ply", 400, Vector(0, 38, -350), Color(0.9, 0.9, 0.9));
+		modelo2.cargar(objetos);
+		Modelo modelo3("../modelos/face_bottom.ply", 400, Vector(0, -38, -350), Color(0.9, 0.9, 0.9));
+		modelo3.cargar(objetos);
+		Modelo modelo4("../modelos/face_left.ply", 400, Vector(-46, 0, -350), Color(1, 0.32, 0.32));
+		modelo4.cargar(objetos);
+		Modelo modelo5("../modelos/face_rigth.ply", 400, Vector(46, 0, -350), Color(0.55, 0.76, 0.29));
+		modelo5.cargar(objetos);
+	}
+
+	leerEscena(inFileStream);
+	inFileStream.close();
 
 	Imagen imagen(w, h);
-	Camara camara(Vector(0, 20, 100), Vector(0.0, 14, 0.0), Vector(0.0, 1.0, 0.0), 60);
-
 	int columnas = 0;
-
-	// Texturas
-	//Textura tex1("../texturas/mapa_hd.ppm");
-
-	// Escena
-	/*addObjeto(new Esfera(Vector(10, 0, 0), 30, Color(0.721, 0.167, 0.323), 50, -1, -1, 0));
-	addObjeto(new Esfera(Vector(10, 80, -200), 30, Color(0.219, 0.352, 0.949), -1, -1, -1, 0));
-	addObjeto(new Esfera(Vector(-44, -10, -20), 20, Color(0.7, 0.7, 0.0), 100, 0.4, -1, 0));
-	//addObjeto(new Esfera(Vector(w/4, -1000030, 1000), 1000000, Color(0.211, 0.694, 0.749 ), -1, -1, -1, 0));
-	addObjeto(new Esfera(Vector(50, -100030, 0), 100000, Color(0.211, 0.694, 0.749 ), -1, 0.6, -1, 0));
-
-	addLuz(new Luz(Vector(50, 50, 100), 0.9));*/
-
-
-	// Cornel Box
-	/*addObjeto(new Esfera(Vector(16, -22, -300), 16, Color(0, 0, 0), -1, -1, 1.6, 0));
-	addObjeto(new Esfera(Vector(-26, -26, -380), 12, Color(0.7, 0.7, 0), 16, -1, -1, 0, tex1));
-
-	//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
-	//addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
-	//addObjeto(new Esfera(Vector(100038, 0, 1000), 100000, Color(0.55, 0.76, 0.29), -1, -1, 0, 0));	// Pared Derecha
-	//addObjeto(new Esfera(Vector(w/4, 0, -100440), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));		// Pared Fondo
-	//addObjeto(new Esfera(Vector(w/4, 100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Techo
-
-	addLuz(new Luz(Vector(0, 20, -350), 0.9));
-
-	Modelo modelo("../modelos/face.ply", 400, Vector(0, 0, -440), Color(0.9, 0.9, 0.9));
-	modelo.cargar(objetos);
-	Modelo modelo2("../modelos/face_top.ply", 400, Vector(0, 38, -350), Color(0.9, 0.9, 0.9));
-	modelo2.cargar(objetos);
-	Modelo modelo3("../modelos/face_bottom.ply", 400, Vector(0, -38, -350), Color(0.9, 0.9, 0.9));
-	modelo3.cargar(objetos);
-	Modelo modelo4("../modelos/face_left.ply", 400, Vector(-46, 0, -350), Color(1, 0.32, 0.32));
-	modelo4.cargar(objetos);
-	Modelo modelo5("../modelos/face_rigth.ply", 400, Vector(46, 0, -350), Color(0.55, 0.76, 0.29));
-	modelo5.cargar(objetos);*/
 
 	//addLuz(new LuzArea(Vector(0, 20, -350), 0.9, Vector(0, 0, 1), Vector(1, 0, 0), 3));
 	//addLuz(new Esfera(Vector(0, 20, -350), 10, 0.9));
@@ -100,67 +120,6 @@ int main() {
 	//addObjeto(new Caja(Vector(-40, -40, -400), Vector(50, 40, -401), Color(0.9, 0.9, 0.9), -1, -1, -1, 0));
 
 	//addObjeto(new Plano(Vector(0, 0, -1), 1, Color(0.9, 0, 0.9), -1, -1, -1, 0));
-
-	// Otra escena
-	/*addObjeto(new Esfera(Vector(-200, -25, 0), 100, Color(1, 0, 0), 100, 0.75, 0, 0));
-	addObjeto(new Esfera(Vector(200, -25, 0), 100, Color(0, 1, 0), 100, 0.75, 0, 0));
-	addObjeto(new Esfera(Vector(0, 325, 0), 100, Color(0, 0, 1 ), 100, 0.75, 0, 0));
-
-	addLuz(new Luz(Vector(0, 100, 200), 0.5));*/
-
-	// Escena textura
-	/*Camara camara(Vector(100, 0, 0), Vector(80, 0, -80), Vector(0, 1, 0), 60);
-	addObjeto(new Esfera(Vector(0, 0, -380), 30, Color(0.7, 0.7, 0), -1, -1, -1, 0, tex1));
-	addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.25, 0.77, 1), -1, -1, 0, 0));	// Suelo
-	addLuz(new Luz(Vector(0, 40, -200), 0.9));
-	addLuz(new Luz(Vector(0, 40, -400), 0.9));*/
-
-	// Escena componente difusa
-	//addObjeto(new Esfera(Vector(-26, -10, -380), 40, Color(0.32, 0.32, 1), -1, -1, -1, 0));
-	//addObjeto(new Esfera(Vector(44, -10, -380), 24, Color(1, 0.32, 0.32), -1, -1, -1, 0));
-	//addLuz(new Luz(Vector(40, 40, -300), 0.9));
-
-	// Escena componente difusa
-	//addObjeto(new Esfera(Vector(-26, -10, -380), 40, Color(0.32, 0.32, 1), -1, -1, -1, 0));
-	//addObjeto(new Esfera(Vector(20, 0, -340), 10, Color(1, 0.32, 0.32), -1, -1, -1, 0));
-	//addLuz(new Luz(Vector(60, 0, -300), 0.9));
-
-	// Escena componente especular
-	//addObjeto(new Esfera(Vector(-26, -10, -380), 40, Color(0.32, 0.32, 1), -1, 0.4, -1, 0));
-	//addObjeto(new Esfera(Vector(44, -10, -380), 24, Color(1, 0.32, 0.32), -1, 0.8, -1, 0));
-	//addLuz(new Luz(Vector(40, 40, -300), 0.9));
-
-	// Escena reflexion
-	//addObjeto(new Esfera(Vector(-26, 0, -400), 40, Color(0.32, 0.32, 1), -1, 0.4, -1, 0));
-	//addObjeto(new Esfera(Vector(36, -10, -300), 20, Color(1, 0.32, 0.32), -1, -1, -1, 0));
-	//addLuz(new Luz(Vector(0, 40, -200), 0.9));
-	//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
-
-	// Escena refraccion
-	/*addObjeto(new Esfera(Vector(16, -22, -240), 16, Color(0, 0, 0), -1, -1, 1.6, 0));
-	addObjeto(new Esfera(Vector(0, -26, -300), 12, Color(0.7, 0.7, 0.32), -1, -1, -1, 0));
-
-	addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
-	addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
-	addObjeto(new Esfera(Vector(100038, 0, 1000), 100000, Color(0.55, 0.76, 0.29), -1, -1, 0, 0));	// Pared Derecha
-	addObjeto(new Esfera(Vector(w/4, 0, -100340), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));		// Pared Fondo
-	addObjeto(new Esfera(Vector(w/4, 100040, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Techo
-	addLuz(new Luz(Vector(0, 20, -250), 0.9));*/
-
-	// Escena Montecarlo (64 muestras)
-	//addObjeto(new Esfera(Vector(0, 0, -300), 30, Color(1, 1, 1), -1, -1, -1, 0));
-	//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.55, 0.76, 0.29), -1, -1, 0, 0));	// Suelo
-	//addLuz(new Luz(Vector(0, 100, -100), 0.9));
-
-	// Escena modelos
-	Modelo modelo("../modelos/apple.ply", 100, Vector(0, 0, -200), Color(1, 0.32, 0.32));
-	modelo.cargar(objetos);
-	addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.32, 0.32, 1), -1, -1, 0, 0));	// Suelo
-	addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
-	addObjeto(new Esfera(Vector(100038, 0, 1000), 100000, Color(0.32, 1, 0.32), -1, -1, 0, 0));	// Pared Derecha
-	addObjeto(new Esfera(Vector(w/4, 0, -100340), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));		// Pared Fondo
-	addObjeto(new Esfera(Vector(w/4, 100040, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Techo
-	addLuz(new Luz(Vector(0, 20, -100), 0.9));
 
 
 	#pragma omp parallel for
@@ -199,8 +158,8 @@ int main() {
 			imagen.pintar(x, y, color);
 		}
 	}
-	imagen.saveBMP(FICHERO_BMP);
-	//imagen.savePPM(FICHERO_PPM);
+	imagen.saveBMP(FICHERO_BMP.c_str());
+	//imagen.savePPM(FICHERO_PPM.c_str());
 
 	t2 = clock();
 	float tiempo = ((float)t2 - (float)t1) / 1000;
@@ -414,7 +373,7 @@ Color calcularLuzIndirecta(const Interseccion& interseccion, const Color& color)
 		Rayo rayoSample = Rayo(interseccion.interseccion + sampleWorld * 0.0001, sampleWorld, 1, interseccion.rayo.iRefracOrigen, interseccion.rayo.rebotes + 1);
 		colorLuzIndirecta = colorLuzIndirecta + trazarRayo(rayoSample) * r1 / pdf;
 	}
-	
+
 	//cout << colorLuzIndirecta.r << " " << colorLuzIndirecta.g << " " << colorLuzIndirecta.b << endl;
 	colorLuzIndirecta.r = colorLuzIndirecta.r / LUZ_INDIRECTA_SAMPLES;
 	colorLuzIndirecta.g = colorLuzIndirecta.g / LUZ_INDIRECTA_SAMPLES;
@@ -491,6 +450,95 @@ Interseccion interseccionMasCercana(const Rayo& rayo) {
 	}
 
 	return interseccionMin;
+}
+
+// 
+void leerEscena(istream& in) {
+	string tipo;
+	in >> tipo;
+	
+	while (in.good()) {
+		if (tipo[0] == '#') {
+			// Ignorar comentarios
+			getline(in, tipo);
+		}
+		else if (tipo.compare("resolucion") == 0) {
+			int anchura, altura;
+
+			in >> anchura;
+			in >> altura;
+
+			w = anchura;
+			h = altura;
+		}
+		else if (tipo.compare("camara") == 0) {
+			Vector posicion, direccion, up;
+			float fov;
+
+			in >> posicion.x >> posicion.y >> posicion.z;
+			in >> direccion.x >> direccion.y >> direccion.z;
+			in >> up.x >> up.y >> up.z;
+			in >> fov;
+
+			camara = Camara(posicion, direccion, up, fov);
+		}
+		else if (tipo.compare("esfera") == 0) {
+			Vector centro;
+			float radio;
+			Color color;
+			float especular, reflexion, irefraccion, crefraccion;
+			string textura;
+
+			in >> centro.x >> centro.y >> centro.z;
+			in >> radio;
+			in >> color.r >> color.g >> color.b;
+			in >> especular;
+			in >> reflexion;
+			in >> irefraccion;
+			in >> crefraccion;
+			in >> textura;
+
+			if (textura.compare("NULL") == 0)
+				addObjeto(new Esfera(centro, radio, color, especular, reflexion, irefraccion, crefraccion));
+			else {
+				//static Textura tex(&textura[0u]);
+				tex[contadorTexturas] = Textura(&textura[0u]);
+				addObjeto(new Esfera(centro, radio, color, especular, reflexion, irefraccion, crefraccion, tex[contadorTexturas]));
+				contadorTexturas++;
+			}
+
+			cout << "Esfera: Centro " << centro << ", Radio " << radio << endl; 
+		}
+		else if (tipo.compare("luz") == 0) {
+			Vector posicion;
+			float intensidad;
+
+			in >> posicion.x >> posicion.y >> posicion.z;
+			in >> intensidad;
+
+			addLuz(new Luz(posicion, intensidad));
+			cout << "Luz: Posicion " << posicion << ", Intensidad " << intensidad << endl; 
+		} 
+		else if (tipo.compare("modelo") == 0) {
+			string fichero;
+			int tamano;
+			Vector translacion;
+			Color color;
+
+			in >> fichero;
+			in >> tamano;
+			in >> translacion.x >> translacion.y >> translacion.z;
+			in >> color.r >> color.g >> color.b;
+
+			Modelo modelo(fichero, tamano, translacion, color);
+			modelo.cargar(objetos);
+		}
+		else {
+			cerr << "Tipo no encontrado: " << tipo << endl;
+			exit(EXIT_FAILURE);
+		}
+		in >> tipo;
+	}
 }
 
 // Añade un objeto a la lista de objetos
