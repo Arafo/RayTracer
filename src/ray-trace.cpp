@@ -1,6 +1,7 @@
 #include<iostream>
 #include <vector>
 #include <ctime>
+#include <sstream>
 
 #include "Vector.h"
 #include "Imagen.h"
@@ -28,6 +29,9 @@ string FICHERO_PPM = "../resultados/imagen.ppm";
 Camara camara;
 Textura tex[100];
 int contadorTexturas = 0;
+float ka = 0.2;
+float kd = 1;
+float ks = 1;
 
 std::vector<Objeto*> objetos;
 std::vector<Luz*> luces;
@@ -81,11 +85,11 @@ int main(int argc, char** argv) {
 		// Cornel Box
 		w = 800, h = 600;
 		LUZ_INDIRECTA = true;
-		LUZ_INDIRECTA_SAMPLES = 4;
+		LUZ_INDIRECTA_SAMPLES = 512;
 		ANTIALIASING = 2;
 		camara = Camara(Vector(0, 20, 100), Vector(0.0, 14, 0.0), Vector(0.0, 1.0, 0.0), 60);
 		addObjeto(new Esfera(Vector(16, -22, -300), 16, Color(0, 0, 0), -1, -1, 1.6, 0));
-		addObjeto(new Esfera(Vector(-26, -26, -380), 12, Color(0.7, 0.7, 0), 16, -1, -1, 0));
+		addObjeto(new Esfera(Vector(-26, -26, -380), 12, Color(0.7, 0.7, 0), -1, 1, -1, 0));
 
 		//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
 		//addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
@@ -158,12 +162,21 @@ int main(int argc, char** argv) {
 			imagen.pintar(x, y, color);
 		}
 	}
-	imagen.saveBMP(FICHERO_BMP.c_str());
-	//imagen.savePPM(FICHERO_PPM.c_str());
 
 	t2 = clock();
-	float tiempo = ((float)t2 - (float)t1) / 1000;
-	cout << endl << "Tiempo: " << tiempo << " segundos" << endl;
+	float tiempo = ((float)t2 - (float)t1);
+	int segundos = tiempo / 1000;
+	int minutos = segundos / 60;
+	int horas = minutos / 60;
+	int milisegundos = (int)tiempo % 1000;
+
+	ostringstream ss;
+	ss << "Tiempo: " << int(horas) << "h " << int(minutos % 60) << "m " << int((int)segundos % 60) << "s " << milisegundos << "ms";
+	//cout << endl << "Tiempo: " << segundos << " segundos" << endl;
+	cout << endl << ss.str() << endl;
+
+	imagen.saveBMP(FICHERO_BMP.c_str());
+	imagen.savePPM(FICHERO_PPM.c_str(), ss.str());
 
 	return 0;
 }
@@ -204,7 +217,7 @@ Color calcularIluminacion(const Interseccion &interseccion) {
 
 //
 Color calcularLuzAmbiental(const Interseccion& interseccion, const Color& color) {
-	return color * 0.2;
+	return color * ka;
 }
 
 //
@@ -230,8 +243,8 @@ Color calcularLuzDifusaEspecular(const Interseccion &interseccion, const Color& 
 					// Sombra
 					continue;
 				}
-				colorDifuso = (colorDifuso + (color * producto)) * luz->intensidad;
-				colorEspecular = colorEspecular + calcularLuzEspecular(interseccion, luz);
+				colorDifuso = ((colorDifuso + (color * producto)) * luz->intensidad) * kd;
+				colorEspecular = colorEspecular + calcularLuzEspecular(interseccion, luz) * ks;
 			}
 		}
 		/*else if (luz->getTipo() == LUZAREA) {

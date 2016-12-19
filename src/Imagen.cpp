@@ -113,9 +113,14 @@ void Imagen::readBMP(const char* fichero) {
 
 // Guarda la imagen almacenada en <_imagen> en el fichero indicado por el
 // puntero <fichero> con formato .ppm
-void Imagen::savePPM(const char *fichero) {
+void Imagen::savePPM(const char *fichero, string tiempo) {
 	FILE *f = fopen(fichero, "wb");
-	fprintf(f, "P6\n%d %d\n255\n", _width, _height);
+	fprintf(f, "P6\n");
+
+    if (!tiempo.empty())
+        fprintf(f, "#%s\n", tiempo.c_str());
+
+    fprintf(f, "%d %d\n255\n", _width, _height);
 
 	for (int y = _height - 1; y >= 0; y--) {
         for (int x = 0; x < _width; x++) {

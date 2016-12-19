@@ -22,7 +22,7 @@ public:
 	// Funciones 
 	void saveBMP(const char *fichero);
 	void readBMP(const char *fichero);
-	void savePPM(const char *fichero);
+	void savePPM(const char *fichero, string tiempo = "");
 	void readPPM(const char *fichero);
 	void pintar(int x, int y, Color color);    
 	int getWidth();
