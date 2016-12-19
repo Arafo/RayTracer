@@ -44,6 +44,7 @@ void Modelo::cargar(vector<Objeto*>& objetos) {
 		Vector v;
 
 		in >> v.x >> v.y >> v.z;
+		in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		minX = min(minX, v.x);
 		minY = min(minY, v.y);
