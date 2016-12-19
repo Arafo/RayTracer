@@ -6,8 +6,10 @@
 
 class Textura {
 public:
-    Textura(const char *fichero) : _imagen(0, 0) {
-        _imagen.readPPM(fichero);
+    Textura() {}
+    Textura(const char *fichero) {
+        _imagen = new Imagen(0, 0);
+        _imagen->readPPM(fichero);
     }
 
     ~Textura() {}
@@ -18,7 +20,7 @@ public:
     Color *getImagen();
 
 private:
-    Imagen _imagen;
+    Imagen* _imagen;
 };
 
 #endif
