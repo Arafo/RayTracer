@@ -17,8 +17,8 @@
 using namespace std;
 
 // Variables globales
-bool LUZ_INDIRECTA = true;
-int LUZ_INDIRECTA_SAMPLES = 32;
+bool LUZ_INDIRECTA = false;
+int LUZ_INDIRECTA_SAMPLES = 8;
 int MAX_REBOTES = 1;
 int ANTIALIASING = 1;
 const char *FICHERO_BMP = "../resultados/imagen.bmp";
@@ -49,8 +49,8 @@ int main() {
 	clock_t t1, t2;
 	t1 = clock();
 
-	int w = 800;
-	int h = 600;
+	int w = 512;
+	int h = 512;
 
 	Imagen imagen(w, h);
 	Camara camara(Vector(0, 20, 100), Vector(0.0, 14, 0.0), Vector(0.0, 1.0, 0.0), 60);
@@ -58,7 +58,7 @@ int main() {
 	int columnas = 0;
 
 	// Texturas
-	Textura tex1("../texturas/mapa_hd.ppm");
+	//Textura tex1("../texturas/mapa_hd.ppm");
 
 	// Escena
 	/*addObjeto(new Esfera(Vector(10, 0, 0), 30, Color(0.721, 0.167, 0.323), 50, -1, -1, 0));
@@ -71,7 +71,7 @@ int main() {
 
 
 	// Cornel Box
-	addObjeto(new Esfera(Vector(16, -22, -300), 16, Color(0, 0, 0), -1, -1, 1.6, 0));
+	/*addObjeto(new Esfera(Vector(16, -22, -300), 16, Color(0, 0, 0), -1, -1, 1.6, 0));
 	addObjeto(new Esfera(Vector(-26, -26, -380), 12, Color(0.7, 0.7, 0), 16, -1, -1, 0, tex1));
 
 	//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
@@ -91,7 +91,7 @@ int main() {
 	Modelo modelo4("../modelos/face_left.ply", 400, Vector(-46, 0, -350), Color(1, 0.32, 0.32));
 	modelo4.cargar(objetos);
 	Modelo modelo5("../modelos/face_rigth.ply", 400, Vector(46, 0, -350), Color(0.55, 0.76, 0.29));
-	modelo5.cargar(objetos);
+	modelo5.cargar(objetos);*/
 
 	//addLuz(new LuzArea(Vector(0, 20, -350), 0.9, Vector(0, 0, 1), Vector(1, 0, 0), 3));
 	//addLuz(new Esfera(Vector(0, 20, -350), 10, 0.9));
@@ -114,6 +114,54 @@ int main() {
 	addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.25, 0.77, 1), -1, -1, 0, 0));	// Suelo
 	addLuz(new Luz(Vector(0, 40, -200), 0.9));
 	addLuz(new Luz(Vector(0, 40, -400), 0.9));*/
+
+	// Escena componente difusa
+	//addObjeto(new Esfera(Vector(-26, -10, -380), 40, Color(0.32, 0.32, 1), -1, -1, -1, 0));
+	//addObjeto(new Esfera(Vector(44, -10, -380), 24, Color(1, 0.32, 0.32), -1, -1, -1, 0));
+	//addLuz(new Luz(Vector(40, 40, -300), 0.9));
+
+	// Escena componente difusa
+	//addObjeto(new Esfera(Vector(-26, -10, -380), 40, Color(0.32, 0.32, 1), -1, -1, -1, 0));
+	//addObjeto(new Esfera(Vector(20, 0, -340), 10, Color(1, 0.32, 0.32), -1, -1, -1, 0));
+	//addLuz(new Luz(Vector(60, 0, -300), 0.9));
+
+	// Escena componente especular
+	//addObjeto(new Esfera(Vector(-26, -10, -380), 40, Color(0.32, 0.32, 1), -1, 0.4, -1, 0));
+	//addObjeto(new Esfera(Vector(44, -10, -380), 24, Color(1, 0.32, 0.32), -1, 0.8, -1, 0));
+	//addLuz(new Luz(Vector(40, 40, -300), 0.9));
+
+	// Escena reflexion
+	//addObjeto(new Esfera(Vector(-26, 0, -400), 40, Color(0.32, 0.32, 1), -1, 0.4, -1, 0));
+	//addObjeto(new Esfera(Vector(36, -10, -300), 20, Color(1, 0.32, 0.32), -1, -1, -1, 0));
+	//addLuz(new Luz(Vector(0, 40, -200), 0.9));
+	//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
+
+	// Escena refraccion
+	/*addObjeto(new Esfera(Vector(16, -22, -240), 16, Color(0, 0, 0), -1, -1, 1.6, 0));
+	addObjeto(new Esfera(Vector(0, -26, -300), 12, Color(0.7, 0.7, 0.32), -1, -1, -1, 0));
+
+	addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
+	addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
+	addObjeto(new Esfera(Vector(100038, 0, 1000), 100000, Color(0.55, 0.76, 0.29), -1, -1, 0, 0));	// Pared Derecha
+	addObjeto(new Esfera(Vector(w/4, 0, -100340), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));		// Pared Fondo
+	addObjeto(new Esfera(Vector(w/4, 100040, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Techo
+	addLuz(new Luz(Vector(0, 20, -250), 0.9));*/
+
+	// Escena Montecarlo (64 muestras)
+	//addObjeto(new Esfera(Vector(0, 0, -300), 30, Color(1, 1, 1), -1, -1, -1, 0));
+	//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.55, 0.76, 0.29), -1, -1, 0, 0));	// Suelo
+	//addLuz(new Luz(Vector(0, 100, -100), 0.9));
+
+	// Escena modelos
+	Modelo modelo("../modelos/apple.ply", 100, Vector(0, 0, -200), Color(1, 0.32, 0.32));
+	modelo.cargar(objetos);
+	addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.32, 0.32, 1), -1, -1, 0, 0));	// Suelo
+	addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
+	addObjeto(new Esfera(Vector(100038, 0, 1000), 100000, Color(0.32, 1, 0.32), -1, -1, 0, 0));	// Pared Derecha
+	addObjeto(new Esfera(Vector(w/4, 0, -100340), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));		// Pared Fondo
+	addObjeto(new Esfera(Vector(w/4, 100040, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Techo
+	addLuz(new Luz(Vector(0, 20, -100), 0.9));
+
 
 	#pragma omp parallel for
 	for (int x = 0; x < w; x++) {
@@ -338,30 +386,36 @@ Color calcularLuzReflexionRefraccion(const Interseccion& interseccion) {
 
 //
 Color calcularLuzIndirecta(const Interseccion& interseccion, const Color& color) {
-	//if (interseccion.rayo.rebotes > 1) {
-		//	return Color();
-	//}
+	if (interseccion.rayo.rebotes > MAX_REBOTES) {
+		//return Color();
+	}
 
 	Color colorLuzIndirecta;
+	Vector Nt, Nb;
+	Vector normal = interseccion.normal;
 	float pdf = 1 / (2 * M_PI); 
 
 	for (int i = 0; i < LUZ_INDIRECTA_SAMPLES; i++) {
-		/*float absorbance = 1.f - max(max(color.r, color.g), color.b);
-		float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		if (random > 1.f - absorbance) {
-			//return Color();
-		}
-		else {*/
 		float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		//cout << r1 << ", " << r2 << endl;
 
-		Vector sample = muestreoSemiesfera(interseccion.normal, r1, r2);
-		Rayo rayoSample = Rayo(interseccion.interseccion + 0.01, sample, 1, interseccion.rayo.iRefracOrigen, interseccion.rayo.rebotes + 1);
+		if (fabs(normal.x) > fabs(normal.y))
+			Nt = Vector(normal.z, 0, -normal.x) / sqrtf(normal.x * normal.x + normal.z * normal.z);
+		else
+			Nt = Vector(0, -normal.z, normal.y) / sqrtf(normal.y * normal.y + normal.z * normal.z);
+		Nb = normal.vectorial(Nt);
+
+		Vector sample = muestreoSemiesfera(normal, r1, r2);
+		Vector sampleWorld(
+			sample.x * Nb.x + sample.y * normal.x + sample.z * Nt.x,
+			sample.x * Nb.y + sample.y * normal.y + sample.z * Nt.y,
+			sample.x * Nb.z + sample.y * normal.z + sample.z * Nt.z); 
+		Rayo rayoSample = Rayo(interseccion.interseccion + sampleWorld * 0.0001, sampleWorld, 1, interseccion.rayo.iRefracOrigen, interseccion.rayo.rebotes + 1);
 		colorLuzIndirecta = colorLuzIndirecta + trazarRayo(rayoSample) * r1 / pdf;
-	//}
 	}
+	
 	//cout << colorLuzIndirecta.r << " " << colorLuzIndirecta.g << " " << colorLuzIndirecta.b << endl;
-
 	colorLuzIndirecta.r = colorLuzIndirecta.r / LUZ_INDIRECTA_SAMPLES;
 	colorLuzIndirecta.g = colorLuzIndirecta.g / LUZ_INDIRECTA_SAMPLES;
 	colorLuzIndirecta.b = colorLuzIndirecta.b / LUZ_INDIRECTA_SAMPLES;
@@ -374,10 +428,10 @@ Vector muestreoSemiesfera(const Vector &n, const float &r1, const float &r2) {
 
     float phi = 2.0 * M_PI * r2;
     float cosTheta = sqrt(1.0 - r1);
-    float sinTheta = sqrtf(1.0 - cosTheta * cosTheta);
+    float sinTheta = sqrtf(1.0 - r1 * r1);
 
     x = cosf(phi) * sinTheta;
-    y = cosTheta;
+    y = r1;
     z = sinf(phi) * sinTheta;
 
     Vector direccion = Vector(x, y, z);
