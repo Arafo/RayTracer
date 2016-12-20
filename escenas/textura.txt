@@ -3,10 +3,10 @@ resolucion 512 512
 #camara 100 0 0 80 0 -80 0 1 0 60
 #luz 0 40 -200 0.9
 #luz 0 40 -400 0.9
-#esfera 0 0 -380 30 0.7 0.7 0 -1 -1 -1 0 ../texturas/mapa_hd.ppm
-esfera 0 -100046 1000 100000 0.25 0.77 1 -1 -1 0 0 NULL
+#esfera 0 0 -380 30 0.7 0.7 0 1 1 -1 -1 -1 0 ../texturas/mapa_hd.ppm
+esfera 0 -100046 1000 100000 0.25 0.77 1 1 1 -1 -1 0 0 NULL
 
 camara 0 20 100 0.0 14 0.0 0.0 1.0 0.0 60
 luz 40 40 -300 0.9
-esfera -26 -10 -380 40 0.32 0.32 1 -1 -1 -1 0 ../texturas/mapa_hd.ppm
-esfera 44 -10 -380 24 1 0.32 0.32 -1 -1 -1 0 ../texturas/pelota.ppm
+esfera -26 -10 -380 40 0.32 0.32 1 1 1 -1 -1 -1 0 ../texturas/mapa_hd.ppm
+esfera 44 -10 -380 24 1 0.32 0.32 1 1 -1 -1 -1 0 ../texturas/pelota.ppm
