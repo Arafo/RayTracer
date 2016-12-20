@@ -83,7 +83,7 @@ void Modelo::cargar(vector<Objeto*>& objetos) {
         Vector c = (vertices[v2] - centerOffset) * scale + translacion;
 
         // TODO: Poner los parametros del triangulo en los parametros del metodo;
-        objetos.push_back(new Triangulo(a, b, c, color, -1, -1, -1, 0));
+        objetos.push_back(new Triangulo(a, b, c, color, 1, 1, -1, -1, -1, 0));
     }
     in.close();
 }

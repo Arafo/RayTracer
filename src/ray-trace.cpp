@@ -30,8 +30,6 @@ Camara camara;
 Textura tex[100];
 int contadorTexturas = 0;
 float ka = 0.2;
-float kd = 1;
-float ks = 1;
 
 std::vector<Objeto*> objetos;
 std::vector<Luz*> luces;
@@ -88,8 +86,8 @@ int main(int argc, char** argv) {
 		LUZ_INDIRECTA_SAMPLES = 512;
 		ANTIALIASING = 2;
 		camara = Camara(Vector(0, 20, 100), Vector(0.0, 14, 0.0), Vector(0.0, 1.0, 0.0), 60);
-		addObjeto(new Esfera(Vector(16, -22, -300), 16, Color(0, 0, 0), -1, -1, 1.6, 0));
-		addObjeto(new Esfera(Vector(-26, -26, -380), 12, Color(0.7, 0.7, 0), -1, 1, -1, 0));
+		addObjeto(new Esfera(Vector(16, -22, -300), 16, Color(0, 0, 0), 1, 1, -1, -1, 1.6, 0));
+		addObjeto(new Esfera(Vector(-26, -26, -380), 12, Color(0.7, 0.7, 0), 1, 1, -1, 1, -1, 0));
 
 		//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
 		//addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
@@ -243,8 +241,8 @@ Color calcularLuzDifusaEspecular(const Interseccion &interseccion, const Color& 
 					// Sombra
 					continue;
 				}
-				colorDifuso = ((colorDifuso + (color * producto)) * luz->intensidad) * kd;
-				colorEspecular = colorEspecular + calcularLuzEspecular(interseccion, luz) * ks;
+				colorDifuso = ((colorDifuso + (color * producto)) * luz->intensidad) * interseccion.objeto->kd;
+				colorEspecular = colorEspecular + calcularLuzEspecular(interseccion, luz) * interseccion.objeto->ks;
 			}
 		}
 		/*else if (luz->getTipo() == LUZAREA) {
@@ -399,7 +397,7 @@ Vector muestreoSemiesfera(const Vector &n, const float &r1, const float &r2) {
     float x, y, z;
 
     float phi = 2.0 * M_PI * r2;
-    float cosTheta = sqrt(1.0 - r1);
+    //float cosTheta = sqrt(1.0 - r1);
     float sinTheta = sqrtf(1.0 - r1 * r1);
 
     x = cosf(phi) * sinTheta;
@@ -499,12 +497,14 @@ void leerEscena(istream& in) {
 			Vector centro;
 			float radio;
 			Color color;
-			float especular, reflexion, irefraccion, crefraccion;
+			float kd, ks, especular, reflexion, irefraccion, crefraccion;
 			string textura;
 
 			in >> centro.x >> centro.y >> centro.z;
 			in >> radio;
 			in >> color.r >> color.g >> color.b;
+			in >> kd;
+			in >> ks;
 			in >> especular;
 			in >> reflexion;
 			in >> irefraccion;
@@ -512,11 +512,11 @@ void leerEscena(istream& in) {
 			in >> textura;
 
 			if (textura.compare("NULL") == 0)
-				addObjeto(new Esfera(centro, radio, color, especular, reflexion, irefraccion, crefraccion));
+				addObjeto(new Esfera(centro, radio, color, kd, ks, especular, reflexion, irefraccion, crefraccion));
 			else {
 				//static Textura tex(&textura[0u]);
 				tex[contadorTexturas] = Textura(&textura[0u]);
-				addObjeto(new Esfera(centro, radio, color, especular, reflexion, irefraccion, crefraccion, tex[contadorTexturas]));
+				addObjeto(new Esfera(centro, radio, color, kd, ks, especular, reflexion, irefraccion, crefraccion, tex[contadorTexturas]));
 				contadorTexturas++;
 			}
 

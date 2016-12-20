@@ -15,11 +15,11 @@ public:
 	// Constructores
 	Esfera(Vector centro_, float radio_) : Objeto(), Luz(), centro(centro_), radio(radio_) {}
 
-	Esfera(Vector centro_, float radio_, Color color, float iEspecular, float iReflex, float iRefrac, float cRefrac) :
-	Objeto(color, iEspecular, iReflex, iRefrac, cRefrac), Luz(), centro(centro_), radio(radio_) {}
+	Esfera(Vector centro_, float radio_, Color color, float kd, float ks, float iEspecular, float iReflex, float iRefrac, float cRefrac) :
+	Objeto(color, kd, ks, iEspecular, iReflex, iRefrac, cRefrac), Luz(), centro(centro_), radio(radio_) {}
 
-	Esfera(Vector centro_, float radio_, Color color, float iEspecular, float iReflex, float iRefrac, float cRefrac, Textura& textura) :
-	Objeto(color, iEspecular, iReflex, iRefrac, cRefrac, textura), Luz(), centro(centro_), radio(radio_) {}
+	Esfera(Vector centro_, float radio_, Color color, float kd, float ks, float iEspecular, float iReflex, float iRefrac, float cRefrac, Textura& textura) :
+	Objeto(color, kd, ks, iEspecular, iReflex, iRefrac, cRefrac, textura), Luz(), centro(centro_), radio(radio_) {}
 
 	Esfera(Vector centro_, float radio_, float intensidad_) :
 	Luz(centro_, intensidad_), centro(centro_), radio(radio_) {

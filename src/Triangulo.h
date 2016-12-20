@@ -13,8 +13,8 @@ public:
   // Constructores
   Triangulo(Vector v0_, Vector v1_, Vector v2_) :  Objeto(), v0(v0_), v1(v1_), v2(v2_) {}
 
-  Triangulo(Vector v0_, Vector v1_, Vector v2_, Color color, float iEspecular, float iReflex, float iRefrac, float cRefrac) :
-  Objeto(color, iEspecular, iReflex, iRefrac, cRefrac), v0(v0_), v1(v1_), v2(v2_) {}
+  Triangulo(Vector v0_, Vector v1_, Vector v2_, Color color, float kd, float ks, float iEspecular, float iReflex, float iRefrac, float cRefrac) :
+  Objeto(color, kd, ks, iEspecular, iReflex, iRefrac, cRefrac), v0(v0_), v1(v1_), v2(v2_) {}
 
   // Funciones
   virtual Interseccion interseccion(Rayo);
