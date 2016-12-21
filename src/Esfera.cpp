@@ -1,3 +1,8 @@
+/**
+   @author Rafael Marcén Altarriba (650435)
+   @author Jaime Puig Ortega (647286)
+*/
+
 #include <math.h>
 
 #include "Esfera.h"
@@ -75,10 +80,10 @@ Color Esfera::getColor(Vector point) {
 
    int pixel = width * textura->getHeight() + height;
 
-   if (pixel > (textura->getWidth() * textura->getHeight())) {
+   //if (pixel > (textura->getWidth() * textura->getHeight())) {
       //cout << px << endl;
       //return Color();
-   }
+   //}
 
    Color final(textura->getImagen()[pixel % (textura->getWidth() * textura->getHeight())]);
    return final;

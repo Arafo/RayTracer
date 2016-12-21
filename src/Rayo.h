@@ -1,3 +1,8 @@
+/**
+	@author Rafael Marcén Altarriba (650435)
+    @author Jaime Puig Ortega (647286)
+*/
+
 #ifndef __RAYO_H__
 #define __RAYO_H__
 
@@ -25,9 +30,6 @@ public:
 		direccion = direccion_.normalizar();
 		origen += (direccion / 1);
 	}
-
-
-
 };
 
 #endif

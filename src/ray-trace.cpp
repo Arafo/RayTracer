@@ -1,3 +1,8 @@
+/**
+	@author Rafael Marcén Altarriba (650435)
+    @author Jaime Puig Ortega (647286)
+*/
+
 #include<iostream>
 #include <vector>
 #include <ctime>
@@ -45,7 +50,7 @@ Color calcularLuzDifusaEspecular(const Interseccion& interseccion, const Color& 
 Color calcularLuzEspecular(const Interseccion& interseccion, Luz* luz);
 Color calcularLuzReflexionRefraccion(const Interseccion& interseccion);
 Color calcularLuzIndirecta(const Interseccion& interseccion, const Color& color);
-Vector muestreoSemiesfera(const Vector &n, const float &r1, const float &r2);
+Vector muestreoSemiesfera(const float &r1, const float &r2);
 Vector reflexion(const Vector& normal, const Vector& direccion);
 Vector refraccion(const Vector& normal, const Vector& direccion, float n);
 float reflectancia(const Vector& normal, const Vector& direccion, float n1, float n2);
@@ -79,25 +84,25 @@ int main(int argc, char** argv) {
 		//exit(EXIT_FAILURE);
 
 		// Si no hay fichero de entrada, se utiliza la cornel box
-		cout << endl << "Cornel Box" << endl;
+		cout << endl << "Escena por defecto: Cornel Box" << endl;
 		// Cornel Box
 		w = 800, h = 600;
 		LUZ_INDIRECTA = true;
-		LUZ_INDIRECTA_SAMPLES = 512;
-		ANTIALIASING = 2;
+		LUZ_INDIRECTA_SAMPLES = 32;
+		ANTIALIASING = 1;
 		camara = Camara(Vector(0, 20, 100), Vector(0.0, 14, 0.0), Vector(0.0, 1.0, 0.0), 60);
 		addObjeto(new Esfera(Vector(16, -22, -300), 16, Color(0, 0, 0), 1, 1, -1, -1, 1.6, 0));
 		addObjeto(new Esfera(Vector(-26, -26, -380), 12, Color(0.7, 0.7, 0), 1, 1, -1, 1, -1, 0));
 
-		//addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Suelo
-		//addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), -1, -1, 0, 0));	// Pared Izquierda
-		//addObjeto(new Esfera(Vector(100038, 0, 1000), 100000, Color(0.55, 0.76, 0.29), -1, -1, 0, 0));	// Pared Derecha
-		//addObjeto(new Esfera(Vector(w/4, 0, -100440), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));		// Pared Fondo
-		//addObjeto(new Esfera(Vector(w/4, 100030, 1000), 100000, Color(0.9, 0.9, 0.9), -1, -1, 0, 0));	// Techo
+		addObjeto(new Esfera(Vector(w/4, -100030, 1000), 100000, Color(0.9, 0.9, 0.9), 1, 1, -1, -1, 0, 0));	// Suelo
+		addObjeto(new Esfera(Vector(-100038, 0, 1000), 100000, Color(1, 0.32, 0.32), 1, 1, -1, -1, 0, 0));	// Pared Izquierda
+		addObjeto(new Esfera(Vector(100038, 0, 1000), 100000, Color(0.55, 0.76, 0.29), 1, 1, -1, -1, 0, 0));	// Pared Derecha
+		addObjeto(new Esfera(Vector(w/4, 0, -100440), 100000, Color(0.9, 0.9, 0.9), 1, 1, -1, -1, 0, 0));		// Pared Fondo
+		addObjeto(new Esfera(Vector(w/4, 100030, 1000), 100000, Color(0.9, 0.9, 0.9), 1, 1, -1, -1, 0, 0));	// Techo
 
 		addLuz(new Luz(Vector(0, 20, -350), 0.9));
 
-		Modelo modelo("../modelos/face.ply", 400, Vector(0, 0, -440), Color(0.9, 0.9, 0.9));
+		/*Modelo modelo("../modelos/face.ply", 400, Vector(0, 0, -440), Color(0.9, 0.9, 0.9));
 		modelo.cargar(objetos);
 		Modelo modelo2("../modelos/face_top.ply", 400, Vector(0, 38, -350), Color(0.9, 0.9, 0.9));
 		modelo2.cargar(objetos);
@@ -106,7 +111,7 @@ int main(int argc, char** argv) {
 		Modelo modelo4("../modelos/face_left.ply", 400, Vector(-46, 0, -350), Color(1, 0.32, 0.32));
 		modelo4.cargar(objetos);
 		Modelo modelo5("../modelos/face_rigth.ply", 400, Vector(46, 0, -350), Color(0.55, 0.76, 0.29));
-		modelo5.cargar(objetos);
+		modelo5.cargar(objetos);*/
 	}
 
 	leerEscena(inFileStream);
@@ -114,15 +119,6 @@ int main(int argc, char** argv) {
 
 	Imagen imagen(w, h);
 	int columnas = 0;
-
-	//addLuz(new LuzArea(Vector(0, 20, -350), 0.9, Vector(0, 0, 1), Vector(1, 0, 0), 3));
-	//addLuz(new Esfera(Vector(0, 20, -350), 10, 0.9));
-	
-	//addObjeto(new Caja(Vector(-51, -40, -200), Vector(-50, 40, -500), Color(1, 0.32, 0.32), -1, -1, -1, 0));
-	//addObjeto(new Caja(Vector(-40, -40, -400), Vector(50, 40, -401), Color(0.9, 0.9, 0.9), -1, -1, -1, 0));
-
-	//addObjeto(new Plano(Vector(0, 0, -1), 1, Color(0.9, 0, 0.9), -1, -1, -1, 0));
-
 
 	#pragma omp parallel for
 	for (int x = 0; x < w; x++) {
@@ -206,19 +202,15 @@ Color calcularIluminacion(const Interseccion &interseccion) {
 
 	Color luzIndirecta = calcularLuzIndirecta(interseccion, color);
 
-	//if (luzDirecta.r == 0.f && luzDirecta.g == 0.f && luzDirecta.b == 0.f) return luzIndirecta;
-	//return (luzDirecta + luzIndirecta) / 2.f;
 	return luzReflexionRefraccion + ((luzAmbiental + luzDifusaEspecular) / M_PI  + luzIndirecta * 2) * color;
-
-	//return ((luzAmbiental + luzDifusaEspecular + luzReflexionRefraccion) / M_PI + luzIndirecta * 2);
 }
 
-//
+// Luz ambiental
 Color calcularLuzAmbiental(const Interseccion& interseccion, const Color& color) {
 	return color * ka;
 }
 
-//
+// Luz difusa y especular
 Color calcularLuzDifusaEspecular(const Interseccion &interseccion, const Color& color) {
 	// Luz difusa y especular
 	Color colorDifuso(0.0, 0.0, 0.0);
@@ -285,7 +277,7 @@ Color calcularLuzDifusaEspecular(const Interseccion &interseccion, const Color& 
 	return colorDifuso + colorEspecular;
 }
 
-//
+// Luz Especular
 Color calcularLuzEspecular(const Interseccion& interseccion, Luz* luz) {
 	Color colorEspecular(0.0, 0.0, 0.0);
 	float brillo = interseccion.objeto->iEspecular;
@@ -311,7 +303,7 @@ Color calcularLuzEspecular(const Interseccion& interseccion, Luz* luz) {
 	return colorEspecular;
 }
 
-//
+// Reflexión y refracción
 Color calcularLuzReflexionRefraccion(const Interseccion& interseccion) {
 	Color colorReflexion;
 	Color colorRefraccion;
@@ -354,7 +346,7 @@ Color calcularLuzReflexionRefraccion(const Interseccion& interseccion) {
 	return colorReflexion + colorRefraccion;
 }
 
-//
+// Luz indirecta (Monte Carlo)
 Color calcularLuzIndirecta(const Interseccion& interseccion, const Color& color) {
 	if (interseccion.rayo.rebotes > MAX_REBOTES) {
 		//return Color();
@@ -376,7 +368,7 @@ Color calcularLuzIndirecta(const Interseccion& interseccion, const Color& color)
 			Nt = Vector(0, -normal.z, normal.y) / sqrtf(normal.y * normal.y + normal.z * normal.z);
 		Nb = normal.vectorial(Nt);
 
-		Vector sample = muestreoSemiesfera(normal, r1, r2);
+		Vector sample = muestreoSemiesfera(r1, r2);
 		Vector sampleWorld(
 			sample.x * Nb.x + sample.y * normal.x + sample.z * Nt.x,
 			sample.x * Nb.y + sample.y * normal.y + sample.z * Nt.y,
@@ -393,7 +385,8 @@ Color calcularLuzIndirecta(const Interseccion& interseccion, const Color& color)
 	return colorLuzIndirecta;
 }
 
-Vector muestreoSemiesfera(const Vector &n, const float &r1, const float &r2) {
+// Muestreo de una semiesfera
+Vector muestreoSemiesfera(const float &r1, const float &r2) {
     float x, y, z;
 
     float phi = 2.0 * M_PI * r2;
@@ -444,13 +437,14 @@ float reflectancia(const Vector& normal, const Vector& direccion, float n1, floa
 	return (r0rth * r0rth + rPar * rPar) / 2.0;
 }
 
-// Devuelve true si el rayo apunta a una sombra
+// Devuelve true si el rayo intersecta con otro objeto antes de alcanzar la luz.
+// Devuelve false en caso contrario
 bool estaEnSombra(const Rayo& rayo, float distanciaLuz) {
 	Interseccion interseccionMin = interseccionMasCercana(rayo);
 	return interseccionMin.hayInterseccion && interseccionMin.distancia < distanciaLuz;
 }
 
-//
+// Devuelve la interseccion más cercana al rayo
 Interseccion interseccionMasCercana(const Rayo& rayo) {
 	Interseccion interseccionMin;
 
@@ -463,7 +457,7 @@ Interseccion interseccionMasCercana(const Rayo& rayo) {
 	return interseccionMin;
 }
 
-// 
+//  Método encargado de leer la escena del fichero de entrada
 void leerEscena(istream& in) {
 	string tipo;
 	in >> tipo;

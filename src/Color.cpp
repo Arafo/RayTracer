@@ -1,5 +1,11 @@
+/**
+	@author Rafael Marcén Altarriba (650435)
+    @author Jaime Puig Ortega (647286)
+*/
+
 #include "Color.h"
 
+// Suma de colores
 Color Color::operator+ (Color const &c) const {
 	Color o;
 	o.r = c.r + r;
@@ -9,6 +15,7 @@ Color Color::operator+ (Color const &c) const {
 	return o;
 }
 
+// Multiplicación de color por número
 Color Color::operator* (float cantidad) const {
 	Color o;
 	o.r = r * cantidad;
@@ -18,6 +25,7 @@ Color Color::operator* (float cantidad) const {
 	return o;
 }
 
+// Multiplicación de color por color
 Color Color::operator* (Color color) const {
 	Color o;
 	o.r = r * color.r;
@@ -27,6 +35,7 @@ Color Color::operator* (Color color) const {
 	return o;
 }
 
+// División de color entre número
 Color Color::operator/ (float cantidad) const {
 	Color o;
 	o.r = r / cantidad;

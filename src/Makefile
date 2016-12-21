@@ -1,4 +1,4 @@
-CXXFLAGS =	-O3 -g -Wall -fmessage-length=0 -fopenmp
+CXXFLAGS =	-O3 -g -Wall -fmessage-length=0 -fno-strict-aliasing -fopenmp
 
 OBJS =		ray-trace.o Vector.o Imagen.o Color.o Rayo.o Camara.o Interseccion.o Objeto.o Esfera.o Luz.o Triangulo.o Modelo.o Textura.o
 

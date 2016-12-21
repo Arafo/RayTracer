@@ -1,3 +1,8 @@
+/**
+	@author Rafael Marcén Altarriba (650435)
+    @author Jaime Puig Ortega (647286)
+*/
+
 #include<iostream>
 #include <vector>
 #include <fstream>
@@ -6,6 +11,8 @@
 #include "Modelo.h"
 #include "Triangulo.h"
 
+// Cargal los triangulos de un modelo 3D en formato PLY
+// en la lista de objetos
 void Modelo::cargar(vector<Objeto*>& objetos) {
 	string dummy;
 	vector<Vector> vertices;

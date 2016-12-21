@@ -1,3 +1,8 @@
+/**
+	@author Rafael Marcén Altarriba (650435)
+    @author Jaime Puig Ortega (647286)
+*/
+
 #ifndef __TRIANGULO_H__
 #define __TRIANGULO_H__
 

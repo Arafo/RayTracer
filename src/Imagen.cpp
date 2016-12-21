@@ -1,3 +1,8 @@
+/**
+    @author Rafael Marcén Altarriba (650435)
+    @author Jaime Puig Ortega (647286)
+*/
+
 #include "Imagen.h"
 
 // Constructor
@@ -171,8 +176,14 @@ void Imagen::readPPM(const char *fichero) {
     }
     ungetc(c, f);
 
-    fscanf(f, "%d %d", &width, &height);
-    fscanf(f, "%d", &maxColor);
+    if (fscanf(f, "%d %d", &width, &height) != 2)
+        exit(1);
+
+    if (fscanf(f, "%d", &maxColor) != 1)
+        exit(1);
+
+    //fscanf(f, "%d %d", &width, &height);
+    //fscanf(f, "%d", &maxColor);
     while (fgetc(f) != '\n') ;
 
     _width = width;
@@ -206,14 +217,17 @@ void Imagen::pintar(int x, int y, Color color) {
     _imagen[x * _height + y] = color;
 }
 
+// Anchura de la imagen
 int Imagen::getWidth() {
 	return _width;
 }
 
+// Altura de la imagen
 int Imagen::getHeight() {
 	return _height;
 }
 
+// Imagen
 Color *Imagen::getImagen() {
 	return _imagen;
 }

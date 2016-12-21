@@ -1,3 +1,8 @@
+/**
+	@author Rafael Marcén Altarriba (650435)
+    @author Jaime Puig Ortega (647286)
+*/
+
 #ifndef __ESFERA_H__
 #define __ESFERA_H__
 
@@ -22,8 +27,7 @@ public:
 	Objeto(color, kd, ks, iEspecular, iReflex, iRefrac, cRefrac, textura), Luz(), centro(centro_), radio(radio_) {}
 
 	Esfera(Vector centro_, float radio_, float intensidad_) :
-	Luz(centro_, intensidad_), centro(centro_), radio(radio_) {
-	}
+	Luz(centro_, intensidad_), centro(centro_), radio(radio_) {}
 
 	// Funciones
 	virtual Interseccion interseccion(Rayo);
