@@ -39,17 +39,17 @@ Vector Vector::operator - (Vector const &v) const {
    return Vector(x - v.x, y - v.y, z - v.z);
 }
 
-// Multiplicación de vectores
+// Multiplicacion de vectores
 Vector Vector::operator * (Vector const &v) const {
    return Vector(x * v.x, y * v.y, z * v.z);
 }
 
-// División de vectores
+// Division de vectores
 Vector Vector::operator / (Vector const &v) const {
    return Vector(x / v.x, y / v.y, z / v.z);
 }
 
-// División de vectores
+// Division de vectores
 Vector & Vector::operator /= (Vector const &v) {
    x /= v.x;
    y /= v.y;

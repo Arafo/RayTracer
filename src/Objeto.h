@@ -28,7 +28,7 @@ public:
 	Objeto(Color color_, float kd_, float ks_, float iEspecular_, float iReflexion_, float iRefraccion_, float cRefraccion_, Textura& textura_) : 
 	color(color_), kd(kd_), ks(ks_), iEspecular(iEspecular_), iReflexion(iReflexion_), iRefraccion(iRefraccion_), cRefraccion(cRefraccion_), textura(&textura_) {}
 
-	// El igual a 0 significa que es un método virtual puro y
+	// El igual a 0 significa que es un metodo virtual puro y
 	// todas la clases que hereden de esta deben implementarla
 	virtual Interseccion interseccion(Rayo) = 0;
 

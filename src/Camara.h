@@ -5,11 +5,11 @@
 
 class Camara {
 public:
-   Vector posicion;  // Posición de la cámara
-   Vector direccion; // Dirección de la cámara
+   Vector posicion;  // Posicion de la camara
+   Vector direccion; // Direccion de la camara
    Vector up;
-   Vector u, v, w;   // Sistema de la cámara
-   float f;          // Separación ojo-pantalla
+   Vector u, v, w;   // Sistema de la camara
+   float f;          // Separacion ojo-pantalla
 
    // Constructores
    Camara() {
@@ -26,6 +26,7 @@ public:
       calcularUVW();
    }
 
+   // Funciones
    void calcularUVW();
 };
 

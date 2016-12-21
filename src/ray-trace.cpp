@@ -427,7 +427,7 @@ Vector refraccion(const Vector& normal, const Vector& direccion, float n) {
 	return direccion * n + normal * (n * cosI - cosT);
 }
 
-//
+// Funcion de reflectancia
 float reflectancia(const Vector& normal, const Vector& direccion, float n1, float n2) {
 	float n = n1 / n2;
 	float cosI = -normal.escalar(direccion);
@@ -444,7 +444,7 @@ float reflectancia(const Vector& normal, const Vector& direccion, float n1, floa
 	return (r0rth * r0rth + rPar * rPar) / 2.0;
 }
 
-//
+// Devuelve true si el rayo apunta a una sombra
 bool estaEnSombra(const Rayo& rayo, float distanciaLuz) {
 	Interseccion interseccionMin = interseccionMasCercana(rayo);
 	return interseccionMin.hayInterseccion && interseccionMin.distancia < distanciaLuz;
@@ -554,12 +554,12 @@ void leerEscena(istream& in) {
 	}
 }
 
-// Añade un objeto a la lista de objetos
+// Anade un objeto a la lista de objetos
 void addObjeto(Objeto* objeto) {
 	objetos.push_back(objeto);
 }
 
-// Añade una luz a la lista de luces
+// Anade una luz a la lista de luces
 void addLuz(Luz* luz) {
 	luces.push_back(luz);
 }
