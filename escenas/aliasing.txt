@@ -1,0 +1,17 @@
+# refraccion
+resolucion 512 512
+camara 0 20 100 0.0 14 0.0 0.0 1.0 0.0 60
+luz 0 30 -250 0.9	
+esfera 0 -14 -240 24 0 0 0 1 1 -1 -1 1.6 0 NULL
+esfera 0 -20 -300 8 0.7 0.7 0.32 1 1 -1 -1 -1 0 NULL
+
+# Suelo
+esfera 0 -100030 1000 100000 0.9 0.9 0.9 1 1 -1 -1 0 0 NULL
+# Pared Izquierda
+esfera -100038 0 1000 100000 1 0.32 0.32 1 1 -1 -1 0 0 NULL
+# Pared Derecha
+esfera 100038 0 1000 100000 0.55 0.76 0.29 1 1 -1 -1 0 0 NULL 
+# Pared Fondo
+esfera 0 0 -100340 100000 0.9 0.9 0.9 1 1 -1 -1 0 0 NULL
+# Techo
+esfera 0 100040 1000 100000 0.9 0.9 0.9 1 1 -1 -1 0 0 NULL
